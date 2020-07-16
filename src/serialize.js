@@ -6,8 +6,13 @@ function serializeChildren(children, level) {
   function serializeChild(child) {
     const checkmark = child.isDone ? "x" : " ";
     const serializedChildren = serializeChildren(child.children, level + 1);
+    const [firstLine, ...restLines] = child.value.split("\n");
+    const indentedRestLines = restLines.map(
+      (line) => " ".repeat((level + 1) * indentSize) + line
+    );
+    const value = [firstLine, ...indentedRestLines].join("\n");
 
-    return `${indent}- [${checkmark}] ${child.value}${serializedChildren}`;
+    return `${indent}- [${checkmark}] ${value}${serializedChildren}`;
   }
 
   return (

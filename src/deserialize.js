@@ -1,11 +1,17 @@
-import { init, dropLast, set, lensPath, last } from "ramda";
+import { init, dropLast, set, lensPath, last, over } from "ramda";
 
 const indentSize = 2;
 
 const taskRegexp = /(?<indent> *)- \[(?<checkmark>x| )\] (?<value>.*)/u;
 
 function deserializeChild(child) {
-  const { indent, checkmark, value } = taskRegexp.exec(child).groups;
+  const result = taskRegexp.exec(child);
+
+  if (result === null) {
+    return child;
+  }
+
+  const { indent, checkmark, value } = result.groups;
 
   return {
     value,
@@ -25,7 +31,22 @@ function deserializeChildren({ children, result, lastLevel, path }) {
 
   const [first, ...rest] = children;
 
-  const { value, isDone, level } = deserializeChild(first);
+  const deserializedChild = deserializeChild(first);
+
+  if (typeof deserializedChild === "string") {
+    return deserializeChildren({
+      children: rest,
+      result: over(
+        lensPath([...path, "value"]),
+        (value) => `${value}\n${deserializedChild.trim()}`,
+        result
+      ),
+      lastLevel,
+      path,
+    });
+  }
+
+  const { value, isDone, level } = deserializedChild;
 
   function getNewPath() {
     if (level > lastLevel) {

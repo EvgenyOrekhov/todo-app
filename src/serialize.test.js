@@ -86,3 +86,32 @@ test("serializes tasks", () => {
 - [x] Frozen`,
   });
 });
+
+test("serializes multiline tasks", () => {
+  expect(
+    serialize([
+      {
+        value: "default",
+        isDone: false,
+        children: [
+          {
+            value: "Create a ToDo app",
+            isDone: false,
+            children: [
+              {
+                value: `Test multiline serialization
+next line`,
+                isDone: false,
+                children: [],
+              },
+            ],
+          },
+        ],
+      },
+    ])
+  ).toStrictEqual({
+    default: `- [ ] Create a ToDo app
+  - [ ] Test multiline serialization
+    next line`,
+  });
+});
