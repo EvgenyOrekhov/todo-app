@@ -14,6 +14,7 @@ test("deserializes tasks", () => {
       children: [
         {
           value: "Create a ToDo app",
+          content: "",
           isDone: false,
           children: [],
         },
@@ -25,11 +26,13 @@ test("deserializes tasks", () => {
       children: [
         {
           value: "Rambo",
+          content: "",
           isDone: false,
           children: [],
         },
         {
           value: "Frozen",
+          content: "",
           isDone: true,
           children: [],
         },
@@ -52,6 +55,7 @@ test("deserializes tasks", () => {
       children: [
         {
           value: "Create a ToDo app",
+          content: "",
           isDone: false,
           children: [],
         },
@@ -63,15 +67,18 @@ test("deserializes tasks", () => {
       children: [
         {
           value: "Rambo",
+          content: "",
           isDone: false,
           children: [
             {
               value: "Rambo: Last Blood",
+              content: "",
               isDone: false,
               children: [],
             },
             {
               value: "Rambo: First Blood",
+              content: "",
               isDone: true,
               children: [],
             },
@@ -79,6 +86,7 @@ test("deserializes tasks", () => {
         },
         {
           value: "Frozen",
+          content: "",
           isDone: true,
           children: [],
         },
@@ -87,12 +95,13 @@ test("deserializes tasks", () => {
   ]);
 });
 
-test("deserializes multiline tasks", () => {
+test("deserializes content", () => {
   expect(
     deserialize({
       default: `- [ ] Create a ToDo app
-  - [ ] Test multiline serialization
-    next line`,
+  - [ ] Test content
+    line 0
+    line 1`,
     })
   ).toStrictEqual([
     {
@@ -101,11 +110,13 @@ test("deserializes multiline tasks", () => {
       children: [
         {
           value: "Create a ToDo app",
+          content: "",
           isDone: false,
           children: [
             {
-              value: `Test multiline serialization
-next line`,
+              value: "Test content",
+              content: `line 0
+line 1`,
               isDone: false,
               children: [],
             },

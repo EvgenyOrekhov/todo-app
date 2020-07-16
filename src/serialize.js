@@ -6,13 +6,12 @@ function serializeChildren(children, level) {
   function serializeChild(child) {
     const checkmark = child.isDone ? "x" : " ";
     const serializedChildren = serializeChildren(child.children, level + 1);
-    const [firstLine, ...restLines] = child.value.split("\n");
-    const indentedRestLines = restLines.map(
-      (line) => " ".repeat((level + 1) * indentSize) + line
-    );
-    const value = [firstLine, ...indentedRestLines].join("\n");
+    const contentIndent = " ".repeat((level + 1) * indentSize);
+    const content = child.content
+      ? "\n" + child.content.replace(/^/gmu, contentIndent)
+      : "";
 
-    return `${indent}- [${checkmark}] ${value}${serializedChildren}`;
+    return `${indent}- [${checkmark}] ${child.value}${content}${serializedChildren}`;
   }
 
   return (

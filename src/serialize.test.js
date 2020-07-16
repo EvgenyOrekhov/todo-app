@@ -87,7 +87,7 @@ test("serializes tasks", () => {
   });
 });
 
-test("serializes multiline tasks", () => {
+test("serializes content", () => {
   expect(
     serialize([
       {
@@ -99,8 +99,9 @@ test("serializes multiline tasks", () => {
             isDone: false,
             children: [
               {
-                value: `Test multiline serialization
-next line`,
+                value: "Test content",
+                content: `line 0
+line 1`,
                 isDone: false,
                 children: [],
               },
@@ -111,7 +112,8 @@ next line`,
     ])
   ).toStrictEqual({
     default: `- [ ] Create a ToDo app
-  - [ ] Test multiline serialization
-    next line`,
+  - [ ] Test content
+    line 0
+    line 1`,
   });
 });

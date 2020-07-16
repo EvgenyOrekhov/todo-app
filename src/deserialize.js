@@ -37,8 +37,9 @@ function deserializeChildren({ children, result, lastLevel, path }) {
     return deserializeChildren({
       children: rest,
       result: over(
-        lensPath([...path, "value"]),
-        (value) => `${value}\n${deserializedChild.trim()}`,
+        lensPath([...path, "content"]),
+        (content) =>
+          `${content}${content ? "\n" : ""}${deserializedChild.trim()}`,
         result
       ),
       lastLevel,
@@ -64,7 +65,11 @@ function deserializeChildren({ children, result, lastLevel, path }) {
 
   return deserializeChildren({
     children: rest,
-    result: set(lensPath(newPath), { value, isDone, children: [] }, result),
+    result: set(
+      lensPath(newPath),
+      { value, content: "", isDone, children: [] },
+      result
+    ),
     lastLevel: level,
     path: newPath,
   });
