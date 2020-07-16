@@ -1,26 +1,48 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+
+const movies = [
+  {
+    value: "Rambo",
+    content: "",
+    isDone: false,
+    children: [
+      {
+        value: "Rambo: Last Blood",
+        content: "line 0\nline1",
+        isDone: false,
+        children: [],
+      },
+      {
+        value: "Rambo: First Blood",
+        content: "",
+        isDone: true,
+        children: [],
+      },
+    ],
+  },
+  {
+    value: "Frozen",
+    content: "",
+    isDone: true,
+    children: [],
+  },
+];
+
+function Item({ value, content, isDone, children }) {
+  return (
+    <li key={value}>
+      <input type="checkbox" checked={isDone}></input>
+      <label>{value}</label>
+      <ul>{children.map(Item)}</ul>
+      <pre>{content}</pre>
+    </li>
+  );
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.jsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <ul>{movies.map(Item)}</ul>;
 }
 
 export default App;
