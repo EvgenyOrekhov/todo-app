@@ -10,12 +10,14 @@ import App from "./App";
 init([
   defaultActions({
     editingValue: [],
+    editingContent: [],
     tasks: {},
   }),
   logger(),
   {
     state: {
       editingValue: [],
+      editingContent: [],
       tasks: [
         {
           value: "default",
@@ -78,6 +80,18 @@ Text text text text`,
             value
           ),
           mergeLeft({ editingValue: [] })
+        )(state),
+      setContent: (content, state) =>
+        pipe(
+          set(
+            lensPath([
+              "tasks",
+              ...intersperse("children", state.editingContent),
+              "content",
+            ]),
+            content
+          ),
+          mergeLeft({ editingContent: [] })
         )(state),
     },
     subscribers: [

@@ -51,7 +51,34 @@ function App({ state, actions }) {
           </div>
         </div>
         <ul className="tasks">{children.map(Task)}</ul>
-        <ReactMarkdown source={content} />
+        {equals(id, state.editingContent) ? (
+          <textarea
+            defaultValue={content}
+            onBlur={(event) => actions.setContent(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.ctrlKey && event.key === "Enter") {
+                actions.setContent(event.target.value);
+
+                return;
+              }
+
+              if (event.key === "Escape") {
+                actions.editingContent.reset();
+
+                return;
+              }
+            }}
+            autoFocus
+          />
+        ) : (
+          <div
+            tabIndex="0"
+            onClick={() => actions.editingContent.set(id)}
+            onFocus={() => actions.editingContent.set(id)}
+          >
+            <ReactMarkdown source={content} />
+          </div>
+        )}
       </li>
     );
   }
