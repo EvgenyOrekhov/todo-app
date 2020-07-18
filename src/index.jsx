@@ -139,6 +139,12 @@ Text text text text`,
           }),
           mergeLeft({ editingValue: [0, 0] })
         )(state),
+      deleteTask: (id, state) =>
+        over(
+          lensPath(["tasks", ...intersperse("children", init(id)), "children"]),
+          remove(last(id), 1),
+          state
+        ),
     },
     subscribers: [
       ({ state, actions }) => {

@@ -12,10 +12,56 @@ function App({ state, actions }) {
 
     return (
       <li key={key}>
-        <div className="task">
+        <div
+          className="task"
+          tabIndex="0"
+          onKeyDown={(event) => {
+            if (
+              state.editingValue.length > 0 ||
+              state.editingContent.length > 0
+            ) {
+              return;
+            }
+
+            if (event.key === " ") {
+              actions.toggleTask(id);
+
+              event.preventDefault();
+
+              return;
+            }
+
+            if (event.key === "Enter") {
+              actions.editingValue.set(id);
+
+              return;
+            }
+
+            if (event.key === "Delete") {
+              if (children.length > 0) {
+                if (
+                  window.confirm(
+                    `Remove this task and and its ${children.length} subtask${
+                      children.length > 1 ? "s" : ""
+                    }?`
+                  )
+                ) {
+                  actions.deleteTask(id);
+
+                  return;
+                }
+
+                return;
+              }
+
+              actions.deleteTask(id);
+            }
+          }}
+        >
           <input
             type="checkbox"
             checked={isDone}
+            tabIndex="-1"
             onChange={() => actions.toggleTask(id)}
           />
           <div className={`value ${isDone ? "is-done" : ""}`}>
@@ -68,7 +114,6 @@ function App({ state, actions }) {
             ) : (
               <div
                 className="clickable-value"
-                tabIndex="0"
                 onClick={() => actions.editingValue.set(id)}
               >
                 <ReactMarkdown source={value} />
@@ -77,30 +122,54 @@ function App({ state, actions }) {
           </div>
         </div>
         <ul className="tasks">{children.map(Task)}</ul>
-        {equals(id, state.editingContent) ? (
-          <textarea
-            defaultValue={content}
-            onBlur={(event) => actions.setContent(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.ctrlKey && event.key === "Enter") {
-                actions.setContent(event.target.value);
+        <div
+          tabIndex={equals(id, state.editingContent) ? "-1" : "0"}
+          onClick={() => actions.editingContent.set(id)}
+          onFocus={() => {
+            if (content === "" && state.editingContent.length === 0) {
+              actions.editingContent.set(id);
+              console.log(123);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (state.editingContent.length > 0) {
+              return;
+            }
 
-                return;
-              }
+            if (event.key === "Enter") {
+              actions.editingContent.set(id);
 
-              if (event.key === "Escape") {
-                actions.editingContent.reset();
+              event.preventDefault();
 
-                return;
-              }
-            }}
-            autoFocus
-          />
-        ) : (
-          <div tabIndex="0" onClick={() => actions.editingContent.set(id)}>
-            <ReactMarkdown source={content} />
-          </div>
-        )}
+              return;
+            }
+          }}
+        >
+          {equals(id, state.editingContent) ? (
+            <textarea
+              defaultValue={content}
+              onBlur={(event) => actions.setContent(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.ctrlKey && event.key === "Enter") {
+                  actions.setContent(event.target.value);
+
+                  return;
+                }
+
+                if (event.key === "Escape") {
+                  actions.editingContent.reset();
+
+                  return;
+                }
+              }}
+              autoFocus
+            />
+          ) : (
+            <div>
+              <ReactMarkdown source={content} />
+            </div>
+          )}
+        </div>
       </li>
     );
   }
