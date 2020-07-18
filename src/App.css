@@ -30,3 +30,7 @@
 .is-done {
   text-decoration: line-through;
 }
+
+.add-task {
+  width: 100%;
+}

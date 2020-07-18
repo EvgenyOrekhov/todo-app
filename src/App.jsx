@@ -25,12 +25,39 @@ function App({ state, actions }) {
                 onBlur={(event) => actions.setValue(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
+                    if (
+                      event.target.value.trim() === "" &&
+                      children.length > 0
+                    ) {
+                      if (
+                        window.confirm(
+                          `Remove this task and and its ${
+                            children.length
+                          } subtask${children.length > 1 ? "s" : ""}?`
+                        )
+                      ) {
+                        actions.setValue("");
+
+                        return;
+                      }
+
+                      actions.editingValue.reset();
+
+                      return;
+                    }
+
                     actions.setValue(event.target.value);
 
                     return;
                   }
 
                   if (event.key === "Escape") {
+                    if (value === "") {
+                      actions.setValue("");
+
+                      return;
+                    }
+
                     actions.editingValue.reset();
 
                     return;
@@ -43,7 +70,6 @@ function App({ state, actions }) {
                 className="clickable-value"
                 tabIndex="0"
                 onClick={() => actions.editingValue.set(id)}
-                onFocus={() => actions.editingValue.set(id)}
               >
                 <ReactMarkdown source={value} />
               </div>
@@ -71,11 +97,7 @@ function App({ state, actions }) {
             autoFocus
           />
         ) : (
-          <div
-            tabIndex="0"
-            onClick={() => actions.editingContent.set(id)}
-            onFocus={() => actions.editingContent.set(id)}
-          >
+          <div tabIndex="0" onClick={() => actions.editingContent.set(id)}>
             <ReactMarkdown source={content} />
           </div>
         )}
@@ -85,7 +107,14 @@ function App({ state, actions }) {
 
   const tasksWithIds = getTasksWithIds(state.tasks);
 
-  return <ul className="tasks">{tasksWithIds[0].children.map(Task)}</ul>;
+  return (
+    <>
+      <button type="button" className="add-task" onClick={actions.addTask}>
+        +
+      </button>
+      <ul className="tasks">{tasksWithIds[0].children.map(Task)}</ul>
+    </>
+  );
 }
 
 export default App;

@@ -1,13 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { init } from "actus";
+import { init as initializeActus } from "actus";
 import defaultActions from "actus-default-actions";
 import logger from "actus-logger";
-import { over, set, not, lensPath, intersperse, pipe, mergeLeft } from "ramda";
+import {
+  over,
+  set,
+  not,
+  lensPath,
+  intersperse,
+  pipe,
+  mergeLeft,
+  prepend,
+  evolve,
+  init,
+  last,
+  remove,
+} from "ramda";
 
 import App from "./App";
 
-init([
+initializeActus([
   defaultActions({
     editingValue: [],
     editingContent: [],
@@ -69,18 +82,35 @@ Text text text text`,
           not,
           state
         ),
-      setValue: (value, state) =>
-        pipe(
+      setValue: (value, state) => {
+        const trimmedValue = value.trim();
+
+        if (trimmedValue === "") {
+          return pipe(
+            over(
+              lensPath([
+                "tasks",
+                ...intersperse("children", init(state.editingValue)),
+                "children",
+              ]),
+              remove(last(state.editingValue), 1)
+            ),
+            mergeLeft({ editingValue: [] })
+          )(state);
+        }
+
+        return pipe(
           set(
             lensPath([
               "tasks",
               ...intersperse("children", state.editingValue),
               "value",
             ]),
-            value
+            trimmedValue
           ),
           mergeLeft({ editingValue: [] })
-        )(state),
+        )(state);
+      },
       setContent: (content, state) =>
         pipe(
           set(
@@ -89,9 +119,25 @@ Text text text text`,
               ...intersperse("children", state.editingContent),
               "content",
             ]),
-            content
+            content.trim()
           ),
           mergeLeft({ editingContent: [] })
+        )(state),
+      addTask: (ignore, state) =>
+        pipe(
+          evolve({
+            tasks: {
+              0: {
+                children: prepend({
+                  value: "",
+                  content: "",
+                  isDone: false,
+                  children: [],
+                }),
+              },
+            },
+          }),
+          mergeLeft({ editingValue: [0, 0] })
         )(state),
     },
     subscribers: [
