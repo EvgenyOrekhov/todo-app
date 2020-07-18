@@ -41,14 +41,16 @@ function App({ state, actions }) {
             ) : (
               <div
                 className="clickable-value"
+                tabIndex="0"
                 onClick={() => actions.editingValue.set(id)}
+                onFocus={() => actions.editingValue.set(id)}
               >
                 <ReactMarkdown source={value} />
               </div>
             )}
           </div>
         </div>
-        <ul>{children.map(Task)}</ul>
+        <ul className="tasks">{children.map(Task)}</ul>
         <ReactMarkdown source={content} />
       </li>
     );
@@ -56,7 +58,7 @@ function App({ state, actions }) {
 
   const tasksWithIds = getTasksWithIds(state.tasks);
 
-  return <ul>{tasksWithIds[0].children.map(Task)}</ul>;
+  return <ul className="tasks">{tasksWithIds[0].children.map(Task)}</ul>;
 }
 
 export default App;
