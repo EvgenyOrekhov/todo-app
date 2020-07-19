@@ -3,34 +3,40 @@ import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 import { equals } from "ramda";
 
-import { getTasksWithIds } from "./selectors";
+import { getTasksWithIds } from "./selectors.js";
 
-import "ace-builds/src-noconflict/mode-markdown";
-import "ace-builds/src-noconflict/theme-tomorrow_night_bright";
+/* eslint-disable import/no-unassigned-import */
+import "ace-builds/src-noconflict/mode-markdown.js";
+import "ace-builds/src-noconflict/theme-tomorrow_night_bright.js";
 import "./App.css";
+/* eslint-enable */
 
 function Task({ task, state, actions }) {
   const { value, content, isDone, children, id, uniqueId } = task;
 
-  const taskRef = useRef();
+  const taskReference = useRef();
   const [shouldScrollIntoView, setShouldScrollIntoView] = useState(false);
 
   useEffect(() => {
     if (shouldScrollIntoView) {
-      taskRef.current.scrollIntoView(false);
+      taskReference.current.scrollIntoView(false);
       setShouldScrollIntoView(false);
     }
   }, [shouldScrollIntoView]);
 
   return (
-    <li key={uniqueId} className={`${isDone ? "is-done" : ""}`} ref={taskRef}>
+    <li
+      key={uniqueId}
+      className={`${isDone ? "is-done" : ""}`}
+      ref={taskReference}
+    >
       <div
         className="task"
         tabIndex="0"
         onKeyDown={(event) => {
           if (
-            state.editingValue.length > 0 ||
-            state.editingContent.length > 0
+            state.editingValue.length !== 0 ||
+            state.editingContent.length !== 0
           ) {
             return;
           }
@@ -62,7 +68,7 @@ function Task({ task, state, actions }) {
           }
 
           if (event.key === "Delete") {
-            if (children.length > 0) {
+            if (children.length !== 0) {
               if (
                 window.confirm(
                   `Remove this task and and its ${children.length} subtask${
@@ -94,8 +100,6 @@ function Task({ task, state, actions }) {
               actions.moveDown(id);
 
               setShouldScrollIntoView(true);
-
-              return;
             }
           }
         }}
@@ -113,7 +117,10 @@ function Task({ task, state, actions }) {
               onBlur={(event) => actions.setValue(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
-                  if (event.target.value.trim() === "" && children.length > 0) {
+                  if (
+                    event.target.value.trim() === "" &&
+                    children.length !== 0
+                  ) {
                     if (
                       window.confirm(
                         `Remove this task and and its ${
@@ -152,8 +159,6 @@ function Task({ task, state, actions }) {
                   }
 
                   actions.editingValue.reset();
-
-                  return;
                 }
               }}
               autoFocus
@@ -177,7 +182,7 @@ function Task({ task, state, actions }) {
             className="delete"
             tabIndex="-1"
             onClick={() => {
-              if (children.length > 0) {
+              if (children.length !== 0) {
                 if (
                   window.confirm(
                     `Remove this task and and its ${children.length} subtask${
@@ -201,12 +206,12 @@ function Task({ task, state, actions }) {
         </div>
       </div>
       <ul className="tasks">
-        {children.map((task) => (
+        {children.map((subtask) => (
           <Task
-            task={task}
+            task={subtask}
             state={state}
             actions={actions}
-            key={task.uniqueId}
+            key={subtask.uniqueId}
           />
         ))}
       </ul>
@@ -222,7 +227,7 @@ function Task({ task, state, actions }) {
             return;
           }
 
-          if (state.editingContent.length > 0) {
+          if (state.editingContent.length !== 0) {
             return;
           }
 
@@ -234,7 +239,7 @@ function Task({ task, state, actions }) {
           }
         }}
         onKeyDown={(event) => {
-          if (state.editingContent.length > 0) {
+          if (state.editingContent.length !== 0) {
             return;
           }
 
@@ -242,8 +247,6 @@ function Task({ task, state, actions }) {
             actions.editingContent.set(id);
 
             event.preventDefault();
-
-            return;
           }
         }}
       >
@@ -261,14 +264,16 @@ function Task({ task, state, actions }) {
               {
                 name: "save",
                 bindKey: { win: "Ctrl-Enter", mac: "Command-Enter" },
-                exec: function (editor) {
+
+                exec(editor) {
                   actions.setContent(editor.getValue());
                 },
               },
               {
                 name: "cancel",
                 bindKey: { win: "Escape", mac: "Escape" },
-                exec: function (editor) {
+
+                exec() {
                   actions.editingContent.reset();
                 },
               },

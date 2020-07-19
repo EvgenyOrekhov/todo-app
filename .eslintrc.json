@@ -10,6 +10,20 @@
     "sourceType": "module"
   },
 
+  "env": {
+    "browser": true
+  },
+
+  "globals": {
+    "blur": "off",
+    "defaultstatus": "off",
+    "defaultStatus": "off",
+    "event": "off",
+    "name": "off",
+    "status": "off",
+    "find": "off"
+  },
+
   "rules": {
     "import/no-extraneous-dependencies": [
       "error",
@@ -35,6 +49,16 @@
   },
 
   "overrides": [
+    {
+      "files": ["*.jsx"],
+
+      "parserOptions": {
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      }
+    },
+
     {
       "files": ["*.test.*"],
 

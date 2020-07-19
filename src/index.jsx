@@ -21,8 +21,8 @@ import {
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
-import App from "./App";
-import { getTasksWithUniqueIds } from "./selectors";
+import App from "./App.jsx";
+import { getTasksWithUniqueIds } from "./selectors.js";
 
 function makeTask() {
   return {
@@ -45,9 +45,11 @@ initializeActus([
     state: {
       editingValue: [],
       editingContent: [],
+
       tasks: getTasksWithUniqueIds([
         {
           value: "default",
+
           children: [
             {
               value: "Create my first task",
@@ -95,6 +97,7 @@ initializeActus([
         },
       ]),
     },
+
     actions: {
       toggleTask: (id, state) =>
         over(
@@ -102,6 +105,7 @@ initializeActus([
           not,
           state
         ),
+
       setValue: (value, state) => {
         const trimmedValue = value.trim();
 
@@ -131,6 +135,7 @@ initializeActus([
           mergeLeft({ editingValue: [] })
         )(state);
       },
+
       setContent: (content, state) =>
         pipe(
           set(
@@ -143,11 +148,12 @@ initializeActus([
           ),
           mergeLeft({ editingContent: [] })
         )(state),
+
       addTask: (ignore, state) =>
         pipe(
           evolve({
             tasks: {
-              0: {
+              "0": {
                 children: append(
                   makeTask({
                     value: "",
@@ -161,6 +167,7 @@ initializeActus([
           }),
           mergeLeft({ editingValue: [0, state.tasks[0].children.length] })
         )(state),
+
       addNextTask: (parentId, state) =>
         pipe(
           over(
@@ -193,6 +200,7 @@ initializeActus([
             ],
           })
         )(state),
+
       addSubtask: (parentId, state) =>
         pipe(
           over(
@@ -225,12 +233,14 @@ initializeActus([
             ],
           })
         )(state),
+
       deleteTask: (id, state) =>
         over(
           lensPath(["tasks", ...intersperse("children", init(id)), "children"]),
           remove(last(id), 1),
           state
         ),
+
       moveUp: (id, state) => {
         if (last(id) === 0) {
           return state;
@@ -247,10 +257,11 @@ initializeActus([
           set(lensPath(["tasks", ...taskId]), previousTask)
         )(state);
       },
-      moveDown: (id, state) => {
-        const parent = path(intersperse("children", init(id)), state.tasks);
 
-        if (last(id) === parent.children.length - 1) {
+      moveDown: (id, state) => {
+        const parentTask = path(intersperse("children", init(id)), state.tasks);
+
+        if (last(id) === parentTask.children.length - 1) {
           return state;
         }
 
@@ -266,6 +277,7 @@ initializeActus([
         )(state);
       },
     },
+
     subscribers: [
       ({ state, actions }) => {
         ReactDOM.render(
