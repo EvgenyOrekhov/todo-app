@@ -1,11 +1,14 @@
-import { getTasksWithIds } from "./selectors";
+import { getTasksWithIds } from "./selectors.js";
 
 test("getTasksWithIds()", () => {
+  expect.hasAssertions();
+
   expect(
     getTasksWithIds([
       {
         value: "default",
         isDone: false,
+
         children: [
           {
             value: "Create a ToDo app",
@@ -17,6 +20,7 @@ test("getTasksWithIds()", () => {
       {
         value: "Movies",
         isDone: false,
+
         children: [
           {
             value: "Rambo",
@@ -36,6 +40,7 @@ test("getTasksWithIds()", () => {
       id: [0],
       value: "default",
       isDone: false,
+
       children: [
         {
           id: [0, 0],
@@ -49,6 +54,7 @@ test("getTasksWithIds()", () => {
       id: [1],
       value: "Movies",
       isDone: false,
+
       children: [
         {
           id: [1, 0],

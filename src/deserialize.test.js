@@ -1,9 +1,11 @@
-import deserialize from "./deserialize";
+import deserialize from "./deserialize.js";
 
 test("deserializes tasks", () => {
+  expect.hasAssertions();
+
   expect(
     deserialize({
-      default: `- [ ] Create a ToDo app`,
+      default: "- [ ] Create a ToDo app",
       Movies: `- [ ] Rambo
 - [x] Frozen`,
     })
@@ -11,6 +13,7 @@ test("deserializes tasks", () => {
     {
       value: "default",
       isDone: false,
+
       children: [
         {
           value: "Create a ToDo app",
@@ -23,6 +26,7 @@ test("deserializes tasks", () => {
     {
       value: "Movies",
       isDone: false,
+
       children: [
         {
           value: "Rambo",
@@ -42,7 +46,7 @@ test("deserializes tasks", () => {
 
   expect(
     deserialize({
-      default: `- [ ] Create a ToDo app`,
+      default: "- [ ] Create a ToDo app",
       Movies: `- [ ] Rambo
   - [ ] Rambo: Last Blood
   - [x] Rambo: First Blood
@@ -52,6 +56,7 @@ test("deserializes tasks", () => {
     {
       value: "default",
       isDone: false,
+
       children: [
         {
           value: "Create a ToDo app",
@@ -64,11 +69,13 @@ test("deserializes tasks", () => {
     {
       value: "Movies",
       isDone: false,
+
       children: [
         {
           value: "Rambo",
           content: "",
           isDone: false,
+
           children: [
             {
               value: "Rambo: Last Blood",
@@ -96,6 +103,8 @@ test("deserializes tasks", () => {
 });
 
 test("deserializes content", () => {
+  expect.hasAssertions();
+
   expect(
     deserialize({
       default: `- [ ] Create a ToDo app
@@ -107,11 +116,13 @@ test("deserializes content", () => {
     {
       value: "default",
       isDone: false,
+
       children: [
         {
           value: "Create a ToDo app",
           content: "",
           isDone: false,
+
           children: [
             {
               value: "Test content",

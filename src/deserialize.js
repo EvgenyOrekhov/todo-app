@@ -36,12 +36,14 @@ function deserializeChildren({ children, result, lastLevel, path }) {
   if (typeof deserializedChild === "string") {
     return deserializeChildren({
       children: rest,
+
       result: over(
         lensPath([...path, "content"]),
         (content) =>
           `${content}${content ? "\n" : ""}${deserializedChild.trim()}`,
         result
       ),
+
       lastLevel,
       path,
     });
@@ -55,6 +57,8 @@ function deserializeChildren({ children, result, lastLevel, path }) {
     }
 
     if (level < lastLevel) {
+      // Have to drop 2 last items: "children" and index.
+      // eslint-disable-next-line no-magic-numbers
       return getNewSiblingPath(dropLast(2, path));
     }
 
@@ -65,11 +69,13 @@ function deserializeChildren({ children, result, lastLevel, path }) {
 
   return deserializeChildren({
     children: rest,
+
     result: set(
       lensPath(newPath),
       { value, content: "", isDone, children: [] },
       result
     ),
+
     lastLevel: level,
     path: newPath,
   });
@@ -79,10 +85,15 @@ export default function deserialize(tasks) {
   return Object.entries(tasks).map(([taskList, children]) => ({
     value: taskList,
     isDone: false,
+
     children: deserializeChildren({
       children: children.split("\n"),
       result: [],
       lastLevel: 0,
+
+      // The index is getting increased by 1 BEFORE the first item is created,
+      // so to get 0, it has to start with -1.
+      // eslint-disable-next-line no-magic-numbers
       path: [-1],
     }),
   }));

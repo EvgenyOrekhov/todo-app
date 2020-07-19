@@ -12,14 +12,16 @@ function setIds(tasks, parentId) {
   });
 }
 
-export function getTasksWithIds(tasks) {
+function getTasksWithIds(tasks) {
   return setIds(tasks, []);
 }
 
-export function getTasksWithUniqueIds(tasks) {
+function getTasksWithUniqueIds(tasks) {
   return tasks.map((task) => ({
     ...task,
     uniqueId: uuidv4(),
     children: getTasksWithUniqueIds(task.children),
   }));
 }
+
+export { getTasksWithIds, getTasksWithUniqueIds };

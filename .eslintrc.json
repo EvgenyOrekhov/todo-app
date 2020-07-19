@@ -1,0 +1,58 @@
+{
+  "extends": [
+    "hardcore",
+    "hardcore/fp",
+    "plugin:jest/all",
+    "plugin:jest-formatting/strict"
+  ],
+
+  "parserOptions": {
+    "sourceType": "module"
+  },
+
+  "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "test/**",
+          "tests/**",
+          "**/*.test.js",
+          "**/*.spec.js",
+          "jest.config.js",
+          "jest.setup.js",
+          "snowpack.config.js"
+        ],
+        "optionalDependencies": false,
+        "peerDependencies": false,
+        "bundledDependencies": false
+      }
+    ],
+
+    "optimize-regex/optimize-regex": "off",
+    "security/detect-unsafe-regex": "off",
+    "jest/require-top-level-describe": "off"
+  },
+
+  "overrides": [
+    {
+      "files": ["*.test.*"],
+
+      "env": {
+        "jest": true
+      }
+    },
+
+    {
+      "files": ["jest.config.js", "snowpack.config.js"],
+
+      "parserOptions": {
+        "sourceType": "script"
+      },
+
+      "env": {
+        "node": true
+      }
+    }
+  ]
+}

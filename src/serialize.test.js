@@ -1,11 +1,14 @@
-import serialize from "./serialize";
+import serialize from "./serialize.js";
 
 test("serializes tasks", () => {
+  expect.hasAssertions();
+
   expect(
     serialize([
       {
         value: "default",
         isDone: false,
+
         children: [
           {
             value: "Create a ToDo app",
@@ -17,6 +20,7 @@ test("serializes tasks", () => {
       {
         value: "Movies",
         isDone: false,
+
         children: [
           {
             value: "Rambo",
@@ -32,7 +36,7 @@ test("serializes tasks", () => {
       },
     ])
   ).toStrictEqual({
-    default: `- [ ] Create a ToDo app`,
+    default: "- [ ] Create a ToDo app",
     Movies: `- [ ] Rambo
 - [x] Frozen`,
   });
@@ -42,6 +46,7 @@ test("serializes tasks", () => {
       {
         value: "default",
         isDone: false,
+
         children: [
           {
             value: "Create a ToDo app",
@@ -53,10 +58,12 @@ test("serializes tasks", () => {
       {
         value: "Movies",
         isDone: false,
+
         children: [
           {
             value: "Rambo",
             isDone: false,
+
             children: [
               {
                 value: "Rambo: Last Blood",
@@ -79,7 +86,7 @@ test("serializes tasks", () => {
       },
     ])
   ).toStrictEqual({
-    default: `- [ ] Create a ToDo app`,
+    default: "- [ ] Create a ToDo app",
     Movies: `- [ ] Rambo
   - [ ] Rambo: Last Blood
   - [x] Rambo: First Blood
@@ -88,15 +95,19 @@ test("serializes tasks", () => {
 });
 
 test("serializes content", () => {
+  expect.hasAssertions();
+
   expect(
     serialize([
       {
         value: "default",
         isDone: false,
+
         children: [
           {
             value: "Create a ToDo app",
             isDone: false,
+
             children: [
               {
                 value: "Test content",
