@@ -125,6 +125,32 @@ function App({ state, actions }) {
                 <ReactMarkdown source={value} />
               </div>
             )}
+            <button
+              type="button"
+              className="delete"
+              tabIndex="-1"
+              onClick={() => {
+                if (children.length > 0) {
+                  if (
+                    window.confirm(
+                      `Remove this task and and its ${children.length} subtask${
+                        children.length > 1 ? "s" : ""
+                      }?`
+                    )
+                  ) {
+                    actions.deleteTask(id);
+
+                    return;
+                  }
+
+                  return;
+                }
+
+                actions.deleteTask(id);
+              }}
+            >
+              ✖
+            </button>
           </div>
         </div>
         <ul className="tasks">{children.map(Task)}</ul>
