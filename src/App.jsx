@@ -140,12 +140,14 @@ function Task({ task, state, actions }) {
 
                   actions.setValue(event.target.value);
 
-                  if (event.ctrlKey) {
-                    actions.addNextTask(id);
-                  }
+                  if (event.target.value.trim() !== "") {
+                    if (event.ctrlKey) {
+                      actions.addNextTask(id);
+                    }
 
-                  if (event.shiftKey) {
-                    actions.addSubtask(id);
+                    if (event.shiftKey) {
+                      actions.addSubtask(id);
+                    }
                   }
 
                   return;
