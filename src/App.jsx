@@ -104,14 +104,15 @@ function App({ state, actions }) {
                       return;
                     }
 
-                    if (event.ctrlKey) {
-                      actions.setValue(event.target.value);
-                      actions.addNextTask(id);
+                    actions.setValue(event.target.value);
 
-                      return;
+                    if (event.ctrlKey) {
+                      actions.addNextTask(id);
                     }
 
-                    actions.setValue(event.target.value);
+                    if (event.shiftKey) {
+                      actions.addSubtask(id);
+                    }
 
                     return;
                   }
@@ -141,7 +142,7 @@ function App({ state, actions }) {
                   actions.editingValue.set(id);
                 }}
               >
-                <ReactMarkdown source={value} />
+                <ReactMarkdown source={value} escapeHtml={false} />
               </div>
             )}
             <button
@@ -174,7 +175,12 @@ function App({ state, actions }) {
         </div>
         <ul className="tasks">{children.map(Task)}</ul>
         <div
-          tabIndex={equals(id, state.editingContent) ? "-1" : "0"}
+          tabIndex={
+            equals(id, state.editingContent) ||
+            (!content && !equals(id, state.editingValue))
+              ? "-1"
+              : "0"
+          }
           onClick={() => {
             if (window.getSelection().type === "Range") {
               return;
@@ -207,6 +213,7 @@ function App({ state, actions }) {
         >
           {equals(id, state.editingContent) ? (
             <textarea
+              className="content"
               defaultValue={content}
               onBlur={(event) => actions.setContent(event.target.value)}
               onKeyDown={(event) => {
@@ -226,7 +233,7 @@ function App({ state, actions }) {
             />
           ) : (
             <div>
-              <ReactMarkdown source={content} />
+              <ReactMarkdown source={content} escapeHtml={false} />
             </div>
           )}
         </div>

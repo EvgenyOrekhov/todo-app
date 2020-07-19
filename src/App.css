@@ -48,3 +48,7 @@
 .value:hover .clickable-value ~ .delete {
   display: initial;
 }
+
+.content {
+  min-height: 16rem;
+}

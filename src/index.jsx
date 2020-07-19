@@ -38,39 +38,45 @@ initializeActus([
           value: "default",
           children: [
             {
-              value: "Rambo",
+              value: "Create my first task",
               content: "",
               isDone: false,
-              children: [
-                {
-                  value: "Rambo: Last Blood",
-                  content: `> line 1
-> line 2
-
-## Header
-
-Text text text text`,
-                  isDone: false,
-                  children: [],
-                },
-                {
-                  value: "Rambo: First Blood",
-                  content: "",
-                  isDone: true,
-                  children: [],
-                },
-              ],
-            },
-            {
-              value: "Frozen",
-              content: "",
-              isDone: true,
               children: [],
             },
             {
-              value: "https://google.com",
-              content: "```js\nconsole.log(123);\n```",
-              isDone: true,
+              value: "Learn keyboard shortcuts",
+              content: `## General
+
+<kbd>Tab</kbd> - focus next element
+
+<kbd>Shift + Tab</kbd> - focus previous element
+
+## Focused task
+
+<kbd>Space</kbd> - Mark as done
+
+<kbd>Enter</kbd> - Edit task
+
+<kbd>Ctrl + Enter</kbd> - Add new sibling task
+
+<kbd>Shift + Enter</kbd> - Add new subtask
+
+<kbd>Delete</kbd> - Delete task
+
+## Editing task
+
+<kbd>Enter</kbd> - Save
+
+<kbd>Esc</kbd> - Cancel
+
+<kbd>Tab</kbd> - Edit content
+
+## Editing content
+
+<kbd>Ctrl + Enter</kbd> - Save
+
+<kbd>Esc</kbd> - Cancel`,
+              isDone: false,
               children: [],
             },
           ],
