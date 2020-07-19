@@ -169,7 +169,7 @@ function App({ state, actions }) {
                 actions.deleteTask(id);
               }}
             >
-              ✖
+              ✕
             </button>
           </div>
         </div>
@@ -246,7 +246,7 @@ function App({ state, actions }) {
   return (
     <>
       <button type="button" className="add-task" onClick={actions.addTask}>
-        +
+        ✚
       </button>
       <ul className="tasks">{tasksWithIds[0].children.map(Task)}</ul>
     </>
