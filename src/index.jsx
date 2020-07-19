@@ -16,6 +16,8 @@ import {
   init,
   last,
   remove,
+  append,
+  view,
 } from "ramda";
 
 import App from "./App";
@@ -128,7 +130,7 @@ Text text text text`,
           evolve({
             tasks: {
               0: {
-                children: prepend({
+                children: append({
                   value: "",
                   content: "",
                   isDone: false,
@@ -137,7 +139,67 @@ Text text text text`,
               },
             },
           }),
-          mergeLeft({ editingValue: [0, 0] })
+          mergeLeft({ editingValue: [0, state.tasks[0].children.length] })
+        )(state),
+      addNextTask: (parentId, state) =>
+        pipe(
+          over(
+            lensPath([
+              "tasks",
+              ...intersperse("children", init(parentId)),
+              "children",
+            ]),
+            append({
+              value: "",
+              content: "",
+              isDone: false,
+              children: [],
+            })
+          ),
+          mergeLeft({
+            editingValue: [
+              ...init(parentId),
+              view(
+                lensPath([
+                  "tasks",
+                  ...intersperse("children", init(parentId)),
+                  "children",
+                  "length",
+                ]),
+                state
+              ),
+            ],
+          })
+        )(state),
+      addSubtask: (parentId, state) =>
+        pipe(
+          over(
+            lensPath([
+              "tasks",
+              ...intersperse("children", parentId),
+              "children",
+            ]),
+            append({
+              value: "",
+              content: "",
+              isDone: false,
+              children: [],
+            })
+          ),
+          mergeLeft({
+            editingValue: [
+              ...parentId,
+              view(
+                lensPath([
+                  "tasks",
+                  ...intersperse("children", parentId),
+                  "children",
+                  "length",
+                ]),
+                state
+              ),
+            ],
+          })
         )(state),
       deleteTask: (id, state) =>
         over(

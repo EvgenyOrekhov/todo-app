@@ -32,6 +32,18 @@ function App({ state, actions }) {
             }
 
             if (event.key === "Enter") {
+              if (event.ctrlKey) {
+                actions.addNextTask(id);
+
+                return;
+              }
+
+              if (event.shiftKey) {
+                actions.addSubtask(id);
+
+                return;
+              }
+
               actions.editingValue.set(id);
 
               return;
@@ -88,6 +100,13 @@ function App({ state, actions }) {
                       }
 
                       actions.editingValue.reset();
+
+                      return;
+                    }
+
+                    if (event.ctrlKey) {
+                      actions.setValue(event.target.value);
+                      actions.addNextTask(id);
 
                       return;
                     }
