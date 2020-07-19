@@ -17,9 +17,22 @@ import {
   remove,
   append,
   view,
+  path,
 } from "ramda";
+import { v4 as uuidv4 } from "uuid";
 
 import App from "./App";
+import { getTasksWithUniqueIds } from "./selectors";
+
+function makeTask() {
+  return {
+    uniqueId: uuidv4(),
+    value: "",
+    content: "",
+    isDone: false,
+    children: [],
+  };
+}
 
 initializeActus([
   defaultActions({
@@ -32,7 +45,7 @@ initializeActus([
     state: {
       editingValue: [],
       editingContent: [],
-      tasks: [
+      tasks: getTasksWithUniqueIds([
         {
           value: "default",
           children: [
@@ -80,7 +93,7 @@ initializeActus([
             },
           ],
         },
-      ],
+      ]),
     },
     actions: {
       toggleTask: (id, state) =>
@@ -135,12 +148,14 @@ initializeActus([
           evolve({
             tasks: {
               0: {
-                children: append({
-                  value: "",
-                  content: "",
-                  isDone: false,
-                  children: [],
-                }),
+                children: append(
+                  makeTask({
+                    value: "",
+                    content: "",
+                    isDone: false,
+                    children: [],
+                  })
+                ),
               },
             },
           }),
@@ -154,12 +169,14 @@ initializeActus([
               ...intersperse("children", init(parentId)),
               "children",
             ]),
-            append({
-              value: "",
-              content: "",
-              isDone: false,
-              children: [],
-            })
+            append(
+              makeTask({
+                value: "",
+                content: "",
+                isDone: false,
+                children: [],
+              })
+            )
           ),
           mergeLeft({
             editingValue: [
@@ -184,12 +201,14 @@ initializeActus([
               ...intersperse("children", parentId),
               "children",
             ]),
-            append({
-              value: "",
-              content: "",
-              isDone: false,
-              children: [],
-            })
+            append(
+              makeTask({
+                value: "",
+                content: "",
+                isDone: false,
+                children: [],
+              })
+            )
           ),
           mergeLeft({
             editingValue: [
@@ -212,6 +231,40 @@ initializeActus([
           remove(last(id), 1),
           state
         ),
+      moveUp: (id, state) => {
+        if (last(id) === 0) {
+          return state;
+        }
+
+        const taskId = intersperse("children", id);
+        const previousTaskId = [...init(taskId), last(taskId) - 1];
+
+        const task = path(taskId, state.tasks);
+        const previousTask = path(previousTaskId, state.tasks);
+
+        return pipe(
+          set(lensPath(["tasks", ...previousTaskId]), task),
+          set(lensPath(["tasks", ...taskId]), previousTask)
+        )(state);
+      },
+      moveDown: (id, state) => {
+        const parent = path(intersperse("children", init(id)), state.tasks);
+
+        if (last(id) === parent.children.length - 1) {
+          return state;
+        }
+
+        const taskId = intersperse("children", id);
+        const nextTaskId = [...init(taskId), last(taskId) + 1];
+
+        const task = path(taskId, state.tasks);
+        const nextTask = path(nextTaskId, state.tasks);
+
+        return pipe(
+          set(lensPath(["tasks", ...nextTaskId]), task),
+          set(lensPath(["tasks", ...taskId]), nextTask)
+        )(state);
+      },
     },
     subscribers: [
       ({ state, actions }) => {

@@ -10,11 +10,11 @@ import "ace-builds/src-noconflict/theme-tomorrow_night_bright";
 import "./App.css";
 
 function App({ state, actions }) {
-  function Task({ value, content, isDone, children, id }) {
+  function Task({ value, content, isDone, children, id, uniqueId }) {
     const key = id.join("-");
 
     return (
-      <li key={key} className={`${isDone ? "is-done" : ""}`}>
+      <li key={uniqueId} className={`${isDone ? "is-done" : ""}`}>
         <div
           className="task"
           tabIndex="0"
@@ -70,6 +70,20 @@ function App({ state, actions }) {
               }
 
               actions.deleteTask(id);
+            }
+
+            if (event.shiftKey) {
+              if (event.key === "ArrowUp") {
+                actions.moveUp(id);
+
+                return;
+              }
+
+              if (event.key === "ArrowDown") {
+                actions.moveDown(id);
+
+                return;
+              }
             }
           }}
         >
