@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import AceEditor from "react-ace";
 import { equals } from "ramda";
 
 import { getTasksWithIds } from "./selectors";
 
+import "ace-builds/src-noconflict/mode-markdown";
+import "ace-builds/src-noconflict/theme-tomorrow_night_bright";
 import "./App.css";
 
 function App({ state, actions }) {
@@ -212,24 +215,31 @@ function App({ state, actions }) {
           }}
         >
           {equals(id, state.editingContent) ? (
-            <textarea
+            <AceEditor
+              mode="markdown"
+              theme="tomorrow_night_bright"
               className="editable-content"
+              width="100%"
+              height="100%"
               defaultValue={content}
-              onBlur={(event) => actions.setContent(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.ctrlKey && event.key === "Enter") {
-                  actions.setContent(event.target.value);
-
-                  return;
-                }
-
-                if (event.key === "Escape") {
-                  actions.editingContent.reset();
-
-                  return;
-                }
-              }}
-              autoFocus
+              focus
+              commands={[
+                {
+                  name: "save",
+                  bindKey: { win: "Ctrl-Enter", mac: "Command-Enter" },
+                  exec: function (editor) {
+                    actions.setContent(editor.getValue());
+                  },
+                },
+                {
+                  name: "cancel",
+                  bindKey: { win: "Escape", mac: "Escape" },
+                  exec: function (editor) {
+                    actions.editingContent.reset();
+                  },
+                },
+              ]}
+              onBlur={(event, editor) => actions.setContent(editor.getValue())}
             />
           ) : (
             <div className="content">
