@@ -223,6 +223,7 @@ function App({ state, actions }) {
               height="100%"
               defaultValue={content}
               focus
+              onFocus={(event, editor) => editor.navigateFileStart()}
               commands={[
                 {
                   name: "save",
