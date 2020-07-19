@@ -11,7 +11,7 @@ function App({ state, actions }) {
     const key = id.join("-");
 
     return (
-      <li key={key}>
+      <li key={key} className={`${isDone ? "is-done" : ""}`}>
         <div
           className="task"
           tabIndex="0"
@@ -76,7 +76,7 @@ function App({ state, actions }) {
             tabIndex="-1"
             onChange={() => actions.toggleTask(id)}
           />
-          <div className={`value ${isDone ? "is-done" : ""}`}>
+          <div className="value">
             {equals(id, state.editingValue) ? (
               <input
                 defaultValue={value}
@@ -213,7 +213,7 @@ function App({ state, actions }) {
         >
           {equals(id, state.editingContent) ? (
             <textarea
-              className="content"
+              className="editable-content"
               defaultValue={content}
               onBlur={(event) => actions.setContent(event.target.value)}
               onKeyDown={(event) => {
@@ -232,7 +232,7 @@ function App({ state, actions }) {
               autoFocus
             />
           ) : (
-            <div>
+            <div className="content">
               <ReactMarkdown source={content} escapeHtml={false} />
             </div>
           )}

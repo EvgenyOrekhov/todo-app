@@ -37,6 +37,27 @@
   text-decoration: line-through;
 }
 
+.is-done .content {
+  opacity: 0.5;
+  max-height: 16rem;
+  overflow-y: hidden;
+  position: relative;
+}
+
+.is-done .content::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2rem;
+
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--background-color)
+  );
+}
+
 .add-task {
   width: 100%;
 }
@@ -49,6 +70,6 @@
   display: initial;
 }
 
-.content {
+.editable-content {
   min-height: 16rem;
 }
