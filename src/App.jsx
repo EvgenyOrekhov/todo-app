@@ -135,12 +135,15 @@ function App({ state, actions }) {
               return;
             }
 
+            if (state.editingContent.length > 0) {
+              return;
+            }
+
             actions.editingContent.set(id);
           }}
           onFocus={() => {
             if (content === "" && state.editingContent.length === 0) {
               actions.editingContent.set(id);
-              console.log(123);
             }
           }}
           onKeyDown={(event) => {
