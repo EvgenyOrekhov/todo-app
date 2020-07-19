@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 import { equals } from "ramda";

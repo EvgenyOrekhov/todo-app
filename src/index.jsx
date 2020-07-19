@@ -11,7 +11,6 @@ import {
   intersperse,
   pipe,
   mergeLeft,
-  prepend,
   evolve,
   init,
   last,
