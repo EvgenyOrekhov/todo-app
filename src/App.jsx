@@ -114,7 +114,13 @@ function App({ state, actions }) {
             ) : (
               <div
                 className="clickable-value"
-                onClick={() => actions.editingValue.set(id)}
+                onClick={() => {
+                  if (window.getSelection().type === "Range") {
+                    return;
+                  }
+
+                  actions.editingValue.set(id);
+                }}
               >
                 <ReactMarkdown source={value} />
               </div>
@@ -124,7 +130,13 @@ function App({ state, actions }) {
         <ul className="tasks">{children.map(Task)}</ul>
         <div
           tabIndex={equals(id, state.editingContent) ? "-1" : "0"}
-          onClick={() => actions.editingContent.set(id)}
+          onClick={() => {
+            if (window.getSelection().type === "Range") {
+              return;
+            }
+
+            actions.editingContent.set(id);
+          }}
           onFocus={() => {
             if (content === "" && state.editingContent.length === 0) {
               actions.editingContent.set(id);
