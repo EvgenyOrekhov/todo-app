@@ -102,10 +102,10 @@ function Value({ task, state, actions }) {
     <div className="value">
       {equals(path, state.editingValuePath) ? (
         <input
+          autoFocus
           defaultValue={value}
           onBlur={(event) => actions.setValue(event.target.value)}
           onKeyDown={handleKeyDown}
-          autoFocus
         />
       ) : (
         <div
@@ -114,14 +114,14 @@ function Value({ task, state, actions }) {
             !isSelectingText() && actions.editingValuePath.set(path)
           }
         >
-          <ReactMarkdown source={value} escapeHtml={false} />
+          <ReactMarkdown escapeHtml={false} source={value} />
         </div>
       )}
       <button
-        type="button"
         className="delete"
-        tabIndex="-1"
         onClick={handleDeleteClick}
+        tabIndex="-1"
+        type="button"
       >
         ✕
       </button>
@@ -164,26 +164,19 @@ function Content({ task, state, actions }) {
 
   return (
     <div
+      onClick={handleContentClick}
+      onFocus={handleContentFocus}
+      onKeyDown={handleContentKeyDown}
       tabIndex={
         equals(path, state.editingContentPath) ||
         (!content && !equals(path, state.editingValuePath))
           ? "-1"
           : "0"
       }
-      onClick={handleContentClick}
-      onFocus={handleContentFocus}
-      onKeyDown={handleContentKeyDown}
     >
       {equals(path, state.editingContentPath) ? (
         <AceEditor
-          mode="markdown"
-          theme="tomorrow_night_bright"
           className="editable-content"
-          width="100%"
-          height="100%"
-          defaultValue={content}
-          focus
-          onFocus={(event, editor) => editor.navigateFileStart()}
           commands={[
             {
               name: "save",
@@ -202,11 +195,18 @@ function Content({ task, state, actions }) {
               },
             },
           ]}
+          defaultValue={content}
+          focus
+          height="100%"
+          mode="markdown"
           onBlur={(event, editor) => actions.setContent(editor.getValue())}
+          onFocus={(event, editor) => editor.navigateFileStart()}
+          theme="tomorrow_night_bright"
+          width="100%"
         />
       ) : (
         <div className="content">
-          <ReactMarkdown source={content} escapeHtml={false} />
+          <ReactMarkdown escapeHtml={false} source={content} />
         </div>
       )}
     </div>
@@ -301,32 +301,32 @@ function Task({ task, state, actions }) {
   }
 
   return (
-    <li key={id} className={`${isDone ? "is-done" : ""}`}>
+    <li className={`${isDone ? "is-done" : ""}`} key={id}>
       <div
-        ref={taskReference}
         className="task"
-        tabIndex="0"
         onKeyDown={handleKeyDown}
+        ref={taskReference}
+        tabIndex="0"
       >
         <input
-          type="checkbox"
           checked={isDone}
-          tabIndex="-1"
           onChange={() => actions.tasks.toggle(path)}
+          tabIndex="-1"
+          type="checkbox"
         />
-        <Value task={task} state={state} actions={actions} />
+        <Value actions={actions} state={state} task={task} />
       </div>
       <ul className="tasks">
         {children.map((subtask) => (
           <Task
-            task={subtask}
-            state={state}
             actions={actions}
             key={subtask.id}
+            state={state}
+            task={subtask}
           />
         ))}
       </ul>
-      <Content task={task} state={state} actions={actions} />
+      <Content actions={actions} state={state} task={task} />
     </li>
   );
 }
@@ -336,12 +336,12 @@ function App({ state, actions }) {
 
   return (
     <>
-      <button type="button" className="add-task" onClick={actions.addTask}>
+      <button className="add-task" onClick={actions.addTask} type="button">
         ✚
       </button>
       <ul className="tasks">
         {tasksWithPaths[0].children.map((task) => (
-          <Task task={task} state={state} actions={actions} key={task.id} />
+          <Task actions={actions} key={task.id} state={state} task={task} />
         ))}
       </ul>
     </>

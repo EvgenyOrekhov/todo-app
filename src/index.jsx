@@ -222,7 +222,7 @@ initializeActus([
       ({ state, actions }) => {
         ReactDOM.render(
           <React.StrictMode>
-            <App state={state} actions={actions} />
+            <App actions={actions} state={state} />
           </React.StrictMode>,
           document.querySelector("#root")
         );

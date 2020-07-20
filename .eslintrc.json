@@ -54,7 +54,7 @@
     {
       "files": ["*.jsx"],
 
-      "extends": ["plugin:react/recommended"],
+      "extends": ["plugin:react/all", "prettier/react"],
 
       "settings": {
         "react": {
