@@ -1,10 +1,10 @@
-import { getTasksWithIds } from "./selectors.js";
+import { getTasksWithPaths } from "./selectors.js";
 
-test("getTasksWithIds()", () => {
+test("getTasksWithPaths()", () => {
   expect.hasAssertions();
 
   expect(
-    getTasksWithIds([
+    getTasksWithPaths([
       {
         value: "default",
         isDone: false,
@@ -37,13 +37,13 @@ test("getTasksWithIds()", () => {
     ])
   ).toStrictEqual([
     {
-      id: [0],
+      path: [0],
       value: "default",
       isDone: false,
 
       children: [
         {
-          id: [0, 0],
+          path: [0, 0],
           value: "Create a ToDo app",
           isDone: false,
           children: [],
@@ -51,19 +51,19 @@ test("getTasksWithIds()", () => {
       ],
     },
     {
-      id: [1],
+      path: [1],
       value: "Movies",
       isDone: false,
 
       children: [
         {
-          id: [1, 0],
+          path: [1, 0],
           value: "Rambo",
           isDone: false,
           children: [],
         },
         {
-          id: [1, 1],
+          path: [1, 1],
           value: "Frozen",
           isDone: true,
           children: [],

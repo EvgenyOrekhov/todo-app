@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 import { equals } from "ramda";
 
-import { getTasksWithIds } from "./selectors.js";
+import { getTasksWithPaths } from "./selectors.js";
 
 /* eslint-disable import/no-unassigned-import */
 import "ace-builds/src-noconflict/mode-markdown.js";
@@ -12,7 +12,7 @@ import "./App.css";
 /* eslint-enable */
 
 function Task({ task, state, actions }) {
-  const { value, content, isDone, children, id, uniqueId } = task;
+  const { value, content, isDone, children, path, id } = task;
 
   const taskReference = useRef();
   const [shouldScrollIntoView, setShouldScrollIntoView] = useState(false);
@@ -25,12 +25,9 @@ function Task({ task, state, actions }) {
   }, [shouldScrollIntoView]);
 
   return (
-    <li
-      key={uniqueId}
-      className={`${isDone ? "is-done" : ""}`}
-      ref={taskReference}
-    >
+    <li key={id} className={`${isDone ? "is-done" : ""}`}>
       <div
+        ref={taskReference}
         className="task"
         tabIndex="0"
         onKeyDown={(event) => {
@@ -42,7 +39,7 @@ function Task({ task, state, actions }) {
           }
 
           if (event.key === " ") {
-            actions.tasks.toggle(id);
+            actions.tasks.toggle(path);
 
             event.preventDefault();
 
@@ -51,18 +48,18 @@ function Task({ task, state, actions }) {
 
           if (event.key === "Enter") {
             if (event.ctrlKey) {
-              actions.addNextTask(id);
+              actions.addNextTask(path);
 
               return;
             }
 
             if (event.shiftKey) {
-              actions.addSubtask(id);
+              actions.addSubtask(path);
 
               return;
             }
 
-            actions.editingValue.set(id);
+            actions.editingValue.set(path);
 
             return;
           }
@@ -76,7 +73,7 @@ function Task({ task, state, actions }) {
                   }?`
                 )
               ) {
-                actions.tasks.delete(id);
+                actions.tasks.delete(path);
 
                 return;
               }
@@ -84,12 +81,12 @@ function Task({ task, state, actions }) {
               return;
             }
 
-            actions.tasks.delete(id);
+            actions.tasks.delete(path);
           }
 
           if (event.shiftKey) {
             if (event.key === "ArrowUp") {
-              actions.tasks.moveUp(id);
+              actions.tasks.moveUp(path);
 
               setShouldScrollIntoView(true);
 
@@ -97,7 +94,7 @@ function Task({ task, state, actions }) {
             }
 
             if (event.key === "ArrowDown") {
-              actions.tasks.moveDown(id);
+              actions.tasks.moveDown(path);
 
               setShouldScrollIntoView(true);
             }
@@ -108,10 +105,10 @@ function Task({ task, state, actions }) {
           type="checkbox"
           checked={isDone}
           tabIndex="-1"
-          onChange={() => actions.tasks.toggle(id)}
+          onChange={() => actions.tasks.toggle(path)}
         />
         <div className="value">
-          {equals(id, state.editingValue) ? (
+          {equals(path, state.editingValue) ? (
             <input
               defaultValue={value}
               onBlur={(event) => actions.setValue(event.target.value)}
@@ -142,11 +139,11 @@ function Task({ task, state, actions }) {
 
                   if (event.target.value.trim() !== "") {
                     if (event.ctrlKey) {
-                      actions.addNextTask(id);
+                      actions.addNextTask(path);
                     }
 
                     if (event.shiftKey) {
-                      actions.addSubtask(id);
+                      actions.addSubtask(path);
                     }
                   }
 
@@ -173,7 +170,7 @@ function Task({ task, state, actions }) {
                   return;
                 }
 
-                actions.editingValue.set(id);
+                actions.editingValue.set(path);
               }}
             >
               <ReactMarkdown source={value} escapeHtml={false} />
@@ -192,7 +189,7 @@ function Task({ task, state, actions }) {
                     }?`
                   )
                 ) {
-                  actions.tasks.delete(id);
+                  actions.tasks.delete(path);
 
                   return;
                 }
@@ -200,7 +197,7 @@ function Task({ task, state, actions }) {
                 return;
               }
 
-              actions.tasks.delete(id);
+              actions.tasks.delete(path);
             }}
           >
             ✕
@@ -213,14 +210,14 @@ function Task({ task, state, actions }) {
             task={subtask}
             state={state}
             actions={actions}
-            key={subtask.uniqueId}
+            key={subtask.id}
           />
         ))}
       </ul>
       <div
         tabIndex={
-          equals(id, state.editingContent) ||
-          (!content && !equals(id, state.editingValue))
+          equals(path, state.editingContent) ||
+          (!content && !equals(path, state.editingValue))
             ? "-1"
             : "0"
         }
@@ -233,11 +230,11 @@ function Task({ task, state, actions }) {
             return;
           }
 
-          actions.editingContent.set(id);
+          actions.editingContent.set(path);
         }}
         onFocus={() => {
           if (content === "" && state.editingContent.length === 0) {
-            actions.editingContent.set(id);
+            actions.editingContent.set(path);
           }
         }}
         onKeyDown={(event) => {
@@ -246,13 +243,13 @@ function Task({ task, state, actions }) {
           }
 
           if (event.key === "Enter") {
-            actions.editingContent.set(id);
+            actions.editingContent.set(path);
 
             event.preventDefault();
           }
         }}
       >
-        {equals(id, state.editingContent) ? (
+        {equals(path, state.editingContent) ? (
           <AceEditor
             mode="markdown"
             theme="tomorrow_night_bright"
@@ -293,7 +290,7 @@ function Task({ task, state, actions }) {
 }
 
 function App({ state, actions }) {
-  const tasksWithIds = getTasksWithIds(state.tasks);
+  const tasksWithPaths = getTasksWithPaths(state.tasks);
 
   return (
     <>
@@ -301,13 +298,8 @@ function App({ state, actions }) {
         ✚
       </button>
       <ul className="tasks">
-        {tasksWithIds[0].children.map((task) => (
-          <Task
-            task={task}
-            state={state}
-            actions={actions}
-            key={task.uniqueId}
-          />
+        {tasksWithPaths[0].children.map((task) => (
+          <Task task={task} state={state} actions={actions} key={task.id} />
         ))}
       </ul>
     </>

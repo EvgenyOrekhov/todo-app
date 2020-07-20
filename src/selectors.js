@@ -1,27 +1,27 @@
 import { v4 as uuidv4 } from "uuid";
 
-function setIds(tasks, parentId) {
+function setPaths(tasks, parentPath) {
   return tasks.map((task, index) => {
-    const id = [...parentId, index];
+    const path = [...parentPath, index];
 
     return {
       ...task,
-      id,
-      children: setIds(task.children, id),
+      path,
+      children: setPaths(task.children, path),
     };
   });
 }
 
-function getTasksWithIds(tasks) {
-  return setIds(tasks, []);
+function getTasksWithPaths(tasks) {
+  return setPaths(tasks, []);
 }
 
-function getTasksWithUniqueIds(tasks) {
+function getTasksWithids(tasks) {
   return tasks.map((task) => ({
     ...task,
-    uniqueId: uuidv4(),
-    children: getTasksWithUniqueIds(task.children),
+    id: uuidv4(),
+    children: getTasksWithids(task.children),
   }));
 }
 
-export { getTasksWithIds, getTasksWithUniqueIds };
+export { getTasksWithPaths, getTasksWithids };
