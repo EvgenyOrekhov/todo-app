@@ -24,6 +24,10 @@ import { v4 as uuidv4 } from "uuid";
 import App from "./App.jsx";
 import { getTasksWithids } from "./selectors.js";
 
+const getFullPath = intersperse("children");
+
+const getFullPathToSiblings = pipe(init, getFullPath, append("children"));
+
 function makeTask() {
   return {
     id: uuidv4(),
@@ -100,21 +104,17 @@ initializeActus([
 
     actions: {
       tasks: {
-        toggle: (path) =>
-          over(lensPath([...intersperse("children", path), "isDone"]), not),
+        toggle: (path) => over(lensPath([...getFullPath(path), "isDone"]), not),
 
         delete: (path) =>
-          over(
-            lensPath([...intersperse("children", init(path)), "children"]),
-            remove(last(path), 1)
-          ),
+          over(lensPath(getFullPathToSiblings(path)), remove(last(path), 1)),
 
         moveUp: (path, tasks) => {
           if (last(path) === 0) {
             return tasks;
           }
 
-          const taskPath = intersperse("children", path);
+          const taskPath = getFullPath(path);
           const previousTaskPath = [...init(taskPath), last(taskPath) - 1];
 
           const task = getByPath(taskPath, tasks);
@@ -127,16 +127,13 @@ initializeActus([
         },
 
         moveDown: (path, tasks) => {
-          const parentTask = getByPath(
-            intersperse("children", init(path)),
-            tasks
-          );
+          const siblings = getByPath(getFullPathToSiblings(path), tasks);
 
-          if (last(path) === parentTask.children.length - 1) {
+          if (last(path) === siblings.length - 1) {
             return tasks;
           }
 
-          const taskPath = intersperse("children", path);
+          const taskPath = getFullPath(path);
           const nextTaskPath = [...init(taskPath), last(taskPath) + 1];
 
           const task = getByPath(taskPath, tasks);
@@ -157,15 +154,14 @@ initializeActus([
             ? over(
                 lensPath([
                   "tasks",
-                  ...intersperse("children", init(state.editingValue)),
-                  "children",
+                  ...getFullPathToSiblings(state.editingValue),
                 ]),
                 remove(last(state.editingValue), 1)
               )
             : set(
                 lensPath([
                   "tasks",
-                  ...intersperse("children", state.editingValue),
+                  ...getFullPath(state.editingValue),
                   "value",
                 ]),
                 trimmedValue
@@ -179,7 +175,7 @@ initializeActus([
           set(
             lensPath([
               "tasks",
-              ...intersperse("children", state.editingContent),
+              ...getFullPath(state.editingContent),
               "content",
             ]),
             content.trim()
@@ -202,11 +198,7 @@ initializeActus([
       addNextTask: (parentPath, state) =>
         pipe(
           over(
-            lensPath([
-              "tasks",
-              ...intersperse("children", init(parentPath)),
-              "children",
-            ]),
+            lensPath(["tasks", ...getFullPathToSiblings(parentPath)]),
             append(makeTask())
           ),
           mergeLeft({
@@ -215,8 +207,7 @@ initializeActus([
               view(
                 lensPath([
                   "tasks",
-                  ...intersperse("children", init(parentPath)),
-                  "children",
+                  ...getFullPathToSiblings(parentPath),
                   "length",
                 ]),
                 state
@@ -228,11 +219,7 @@ initializeActus([
       addSubtask: (parentPath, state) =>
         pipe(
           over(
-            lensPath([
-              "tasks",
-              ...intersperse("children", parentPath),
-              "children",
-            ]),
+            lensPath(["tasks", ...getFullPath(parentPath), "children"]),
             append(makeTask())
           ),
           mergeLeft({
@@ -241,7 +228,7 @@ initializeActus([
               view(
                 lensPath([
                   "tasks",
-                  ...intersperse("children", parentPath),
+                  ...getFullPath(parentPath),
                   "children",
                   "length",
                 ]),
