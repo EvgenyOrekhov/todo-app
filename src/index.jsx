@@ -154,14 +154,7 @@ initializeActus([
           evolve({
             tasks: {
               "0": {
-                children: append(
-                  makeTask({
-                    value: "",
-                    content: "",
-                    isDone: false,
-                    children: [],
-                  })
-                ),
+                children: append(makeTask()),
               },
             },
           }),
@@ -176,14 +169,7 @@ initializeActus([
               ...intersperse("children", init(parentId)),
               "children",
             ]),
-            append(
-              makeTask({
-                value: "",
-                content: "",
-                isDone: false,
-                children: [],
-              })
-            )
+            append(makeTask())
           ),
           mergeLeft({
             editingValue: [
@@ -209,14 +195,7 @@ initializeActus([
               ...intersperse("children", parentId),
               "children",
             ]),
-            append(
-              makeTask({
-                value: "",
-                content: "",
-                isDone: false,
-                children: [],
-              })
-            )
+            append(makeTask())
           ),
           mergeLeft({
             editingValue: [

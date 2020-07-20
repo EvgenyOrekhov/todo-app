@@ -43,6 +43,8 @@
       }
     ],
 
+    "no-alert": "off",
+
     "optimize-regex/optimize-regex": "off",
     "security/detect-unsafe-regex": "off",
     "jest/require-top-level-describe": "off"
