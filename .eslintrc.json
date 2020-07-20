@@ -54,10 +54,16 @@
     {
       "files": ["*.jsx"],
 
-      "parserOptions": {
-        "ecmaFeatures": {
-          "jsx": true
+      "extends": ["plugin:react/recommended"],
+
+      "settings": {
+        "react": {
+          "version": "detect"
         }
+      },
+
+      "rules": {
+        "react/prop-types": "off"
       }
     },
 
