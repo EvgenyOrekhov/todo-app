@@ -11,6 +11,10 @@ import "ace-builds/src-noconflict/theme-tomorrow_night_bright.js";
 import "./App.css";
 /* eslint-enable */
 
+function isSelectingText() {
+  return window.getSelection().type === "Range";
+}
+
 function Task({ task, state, actions }) {
   const { value, content, isDone, children, path, id } = task;
 
@@ -24,82 +28,180 @@ function Task({ task, state, actions }) {
     }
   }, [shouldScrollIntoView]);
 
+  function handleTaskKeyDown(event) {
+    if (
+      state.editingValuePath.length !== 0 ||
+      state.editingContentPath.length !== 0
+    ) {
+      return;
+    }
+
+    if (event.key === " ") {
+      actions.tasks.toggle(path);
+
+      event.preventDefault();
+
+      return;
+    }
+
+    if (event.key === "Enter") {
+      if (event.ctrlKey) {
+        actions.addNextTask(path);
+
+        return;
+      }
+
+      if (event.shiftKey) {
+        actions.addSubtask(path);
+
+        return;
+      }
+
+      actions.editingValuePath.set(path);
+
+      return;
+    }
+
+    if (event.key === "Delete") {
+      if (children.length !== 0) {
+        if (
+          window.confirm(
+            `Remove this task and and its ${children.length} subtask${
+              children.length > 1 ? "s" : ""
+            }?`
+          )
+        ) {
+          actions.tasks.delete(path);
+
+          return;
+        }
+
+        return;
+      }
+
+      actions.tasks.delete(path);
+    }
+
+    if (event.shiftKey) {
+      if (event.key === "ArrowUp") {
+        actions.tasks.moveUp(path);
+
+        setShouldScrollIntoView(true);
+
+        return;
+      }
+
+      if (event.key === "ArrowDown") {
+        actions.tasks.moveDown(path);
+
+        setShouldScrollIntoView(true);
+      }
+    }
+  }
+
+  function handleValueKeyDown(event) {
+    if (event.key === "Enter") {
+      if (event.target.value.trim() === "" && children.length !== 0) {
+        if (
+          window.confirm(
+            `Remove this task and and its ${children.length} subtask${
+              children.length > 1 ? "s" : ""
+            }?`
+          )
+        ) {
+          actions.setValue("");
+
+          return;
+        }
+
+        actions.editingValuePath.reset();
+
+        return;
+      }
+
+      actions.setValue(event.target.value);
+
+      if (event.target.value.trim() !== "") {
+        if (event.ctrlKey) {
+          actions.addNextTask(path);
+        }
+
+        if (event.shiftKey) {
+          actions.addSubtask(path);
+        }
+      }
+
+      return;
+    }
+
+    if (event.key === "Escape") {
+      if (value === "") {
+        actions.setValue("");
+
+        return;
+      }
+
+      actions.editingValuePath.reset();
+    }
+  }
+
+  function handleDeleteClick() {
+    if (children.length !== 0) {
+      if (
+        window.confirm(
+          `Remove this task and and its ${children.length} subtask${
+            children.length > 1 ? "s" : ""
+          }?`
+        )
+      ) {
+        actions.tasks.delete(path);
+
+        return;
+      }
+
+      return;
+    }
+
+    actions.tasks.delete(path);
+  }
+
+  function handleContentClick() {
+    if (window.getSelection().type === "Range") {
+      return;
+    }
+
+    if (state.editingContentPath.length !== 0) {
+      return;
+    }
+
+    actions.editingContentPath.set(path);
+  }
+
+  function handleContentFocus() {
+    if (content === "" && state.editingContentPath.length === 0) {
+      actions.editingContentPath.set(path);
+    }
+  }
+
+  function handleContentKeyDown(event) {
+    if (state.editingContentPath.length !== 0) {
+      return;
+    }
+
+    if (event.key === "Enter") {
+      actions.editingContentPath.set(path);
+
+      event.preventDefault();
+    }
+  }
+
   return (
     <li key={id} className={`${isDone ? "is-done" : ""}`}>
       <div
         ref={taskReference}
         className="task"
         tabIndex="0"
-        onKeyDown={(event) => {
-          if (
-            state.editingValuePath.length !== 0 ||
-            state.editingContentPath.length !== 0
-          ) {
-            return;
-          }
-
-          if (event.key === " ") {
-            actions.tasks.toggle(path);
-
-            event.preventDefault();
-
-            return;
-          }
-
-          if (event.key === "Enter") {
-            if (event.ctrlKey) {
-              actions.addNextTask(path);
-
-              return;
-            }
-
-            if (event.shiftKey) {
-              actions.addSubtask(path);
-
-              return;
-            }
-
-            actions.editingValuePath.set(path);
-
-            return;
-          }
-
-          if (event.key === "Delete") {
-            if (children.length !== 0) {
-              if (
-                window.confirm(
-                  `Remove this task and and its ${children.length} subtask${
-                    children.length > 1 ? "s" : ""
-                  }?`
-                )
-              ) {
-                actions.tasks.delete(path);
-
-                return;
-              }
-
-              return;
-            }
-
-            actions.tasks.delete(path);
-          }
-
-          if (event.shiftKey) {
-            if (event.key === "ArrowUp") {
-              actions.tasks.moveUp(path);
-
-              setShouldScrollIntoView(true);
-
-              return;
-            }
-
-            if (event.key === "ArrowDown") {
-              actions.tasks.moveDown(path);
-
-              setShouldScrollIntoView(true);
-            }
-          }
-        }}
+        onKeyDown={handleTaskKeyDown}
       >
         <input
           type="checkbox"
@@ -112,66 +214,15 @@ function Task({ task, state, actions }) {
             <input
               defaultValue={value}
               onBlur={(event) => actions.setValue(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  if (
-                    event.target.value.trim() === "" &&
-                    children.length !== 0
-                  ) {
-                    if (
-                      window.confirm(
-                        `Remove this task and and its ${
-                          children.length
-                        } subtask${children.length > 1 ? "s" : ""}?`
-                      )
-                    ) {
-                      actions.setValue("");
-
-                      return;
-                    }
-
-                    actions.editingValuePath.reset();
-
-                    return;
-                  }
-
-                  actions.setValue(event.target.value);
-
-                  if (event.target.value.trim() !== "") {
-                    if (event.ctrlKey) {
-                      actions.addNextTask(path);
-                    }
-
-                    if (event.shiftKey) {
-                      actions.addSubtask(path);
-                    }
-                  }
-
-                  return;
-                }
-
-                if (event.key === "Escape") {
-                  if (value === "") {
-                    actions.setValue("");
-
-                    return;
-                  }
-
-                  actions.editingValuePath.reset();
-                }
-              }}
+              onKeyDown={handleValueKeyDown}
               autoFocus
             />
           ) : (
             <div
               className="clickable-value"
-              onClick={() => {
-                if (window.getSelection().type === "Range") {
-                  return;
-                }
-
-                actions.editingValuePath.set(path);
-              }}
+              onClick={() =>
+                !isSelectingText() && actions.editingValuePath.set(path)
+              }
             >
               <ReactMarkdown source={value} escapeHtml={false} />
             </div>
@@ -180,25 +231,7 @@ function Task({ task, state, actions }) {
             type="button"
             className="delete"
             tabIndex="-1"
-            onClick={() => {
-              if (children.length !== 0) {
-                if (
-                  window.confirm(
-                    `Remove this task and and its ${children.length} subtask${
-                      children.length > 1 ? "s" : ""
-                    }?`
-                  )
-                ) {
-                  actions.tasks.delete(path);
-
-                  return;
-                }
-
-                return;
-              }
-
-              actions.tasks.delete(path);
-            }}
+            onClick={handleDeleteClick}
           >
             ✕
           </button>
@@ -221,33 +254,9 @@ function Task({ task, state, actions }) {
             ? "-1"
             : "0"
         }
-        onClick={() => {
-          if (window.getSelection().type === "Range") {
-            return;
-          }
-
-          if (state.editingContentPath.length !== 0) {
-            return;
-          }
-
-          actions.editingContentPath.set(path);
-        }}
-        onFocus={() => {
-          if (content === "" && state.editingContentPath.length === 0) {
-            actions.editingContentPath.set(path);
-          }
-        }}
-        onKeyDown={(event) => {
-          if (state.editingContentPath.length !== 0) {
-            return;
-          }
-
-          if (event.key === "Enter") {
-            actions.editingContentPath.set(path);
-
-            event.preventDefault();
-          }
-        }}
+        onClick={handleContentClick}
+        onFocus={handleContentFocus}
+        onKeyDown={handleContentKeyDown}
       >
         {equals(path, state.editingContentPath) ? (
           <AceEditor
