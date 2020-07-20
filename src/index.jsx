@@ -39,6 +39,28 @@ function deleteAtPath(path) {
   return updateAtPath(getFullPathToSiblings(path), remove(last(path), 1));
 }
 
+function move(indexShift) {
+  return (path, tasks) => {
+    const newIndex = last(path) + indexShift;
+    const siblings = getAtPath(getFullPathToSiblings(path), tasks);
+
+    if (newIndex < 0 || newIndex >= siblings.length) {
+      return tasks;
+    }
+
+    const taskPath = getFullPath(path);
+    const previousTaskPath = [...init(taskPath), newIndex];
+
+    const task = getAtPath(taskPath, tasks);
+    const previousTask = getAtPath(previousTaskPath, tasks);
+
+    return pipe(
+      setAtPath(previousTaskPath, task),
+      setAtPath(taskPath, previousTask)
+    )(tasks);
+  };
+}
+
 function makeTask() {
   return {
     id: uuidv4(),
@@ -51,6 +73,24 @@ function makeTask() {
 
 function appendNewTask(tasks) {
   return append(makeTask(), tasks);
+}
+
+function addNextTask(parentPath, state) {
+  return pipe(
+    updateAtPath(
+      ["tasks", ...getFullPathToSiblings(parentPath)],
+      appendNewTask
+    ),
+    mergeLeft({
+      editingValuePath: [
+        ...init(parentPath),
+        getAtPath(
+          ["tasks", ...getFullPathToSiblings(parentPath), "length"],
+          state
+        ),
+      ],
+    })
+  )(state);
 }
 
 initializeActus([
@@ -123,41 +163,10 @@ initializeActus([
 
         delete: deleteAtPath,
 
-        moveUp: (path, tasks) => {
-          if (last(path) === 0) {
-            return tasks;
-          }
+        // eslint-disable-next-line no-magic-numbers
+        moveUp: move(-1),
 
-          const taskPath = getFullPath(path);
-          const previousTaskPath = [...init(taskPath), last(taskPath) - 1];
-
-          const task = getAtPath(taskPath, tasks);
-          const previousTask = getAtPath(previousTaskPath, tasks);
-
-          return pipe(
-            setAtPath(previousTaskPath, task),
-            setAtPath(taskPath, previousTask)
-          )(tasks);
-        },
-
-        moveDown: (path, tasks) => {
-          const siblings = getAtPath(getFullPathToSiblings(path), tasks);
-
-          if (last(path) === siblings.length - 1) {
-            return tasks;
-          }
-
-          const taskPath = getFullPath(path);
-          const nextTaskPath = [...init(taskPath), last(taskPath) + 1];
-
-          const task = getAtPath(taskPath, tasks);
-          const nextTask = getAtPath(nextTaskPath, tasks);
-
-          return pipe(
-            setAtPath(nextTaskPath, task),
-            setAtPath(taskPath, nextTask)
-          )(tasks);
-        },
+        moveDown: move(1),
       },
 
       setValue: (value, state) => {
@@ -186,28 +195,9 @@ initializeActus([
           mergeLeft({ editingContentPath: [] })
         )(state),
 
-      addTask: (ignore, state) =>
-        pipe(
-          updateAtPath(["tasks", 0, "children"], appendNewTask),
-          mergeLeft({ editingValuePath: [0, state.tasks[0].children.length] })
-        )(state),
+      addTask: (ignore, state) => addNextTask([0, 0], state),
 
-      addNextTask: (parentPath, state) =>
-        pipe(
-          updateAtPath(
-            ["tasks", ...getFullPathToSiblings(parentPath)],
-            appendNewTask
-          ),
-          mergeLeft({
-            editingValuePath: [
-              ...init(parentPath),
-              getAtPath(
-                ["tasks", ...getFullPathToSiblings(parentPath), "length"],
-                state
-              ),
-            ],
-          })
-        )(state),
+      addNextTask,
 
       addSubtask: (parentPath, state) =>
         pipe(
