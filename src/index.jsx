@@ -49,6 +49,10 @@ function makeTask() {
   };
 }
 
+function appendNewTask(tasks) {
+  return append(makeTask(), tasks);
+}
+
 initializeActus([
   defaultActions({
     editingValuePath: [],
@@ -184,7 +188,7 @@ initializeActus([
 
       addTask: (ignore, state) =>
         pipe(
-          updateAtPath(["tasks", 0, "children"], append(makeTask())),
+          updateAtPath(["tasks", 0, "children"], appendNewTask),
           mergeLeft({ editingValuePath: [0, state.tasks[0].children.length] })
         )(state),
 
@@ -192,7 +196,7 @@ initializeActus([
         pipe(
           updateAtPath(
             ["tasks", ...getFullPathToSiblings(parentPath)],
-            append(makeTask())
+            appendNewTask
           ),
           mergeLeft({
             editingValuePath: [
@@ -209,7 +213,7 @@ initializeActus([
         pipe(
           updateAtPath(
             ["tasks", ...getFullPath(parentPath), "children"],
-            append(makeTask())
+            appendNewTask
           ),
           mergeLeft({
             editingValuePath: [
