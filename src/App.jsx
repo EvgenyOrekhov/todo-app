@@ -32,8 +32,8 @@ function Task({ task, state, actions }) {
         tabIndex="0"
         onKeyDown={(event) => {
           if (
-            state.editingValue.length !== 0 ||
-            state.editingContent.length !== 0
+            state.editingValuePath.length !== 0 ||
+            state.editingContentPath.length !== 0
           ) {
             return;
           }
@@ -59,7 +59,7 @@ function Task({ task, state, actions }) {
               return;
             }
 
-            actions.editingValue.set(path);
+            actions.editingValuePath.set(path);
 
             return;
           }
@@ -108,7 +108,7 @@ function Task({ task, state, actions }) {
           onChange={() => actions.tasks.toggle(path)}
         />
         <div className="value">
-          {equals(path, state.editingValue) ? (
+          {equals(path, state.editingValuePath) ? (
             <input
               defaultValue={value}
               onBlur={(event) => actions.setValue(event.target.value)}
@@ -130,7 +130,7 @@ function Task({ task, state, actions }) {
                       return;
                     }
 
-                    actions.editingValue.reset();
+                    actions.editingValuePath.reset();
 
                     return;
                   }
@@ -157,7 +157,7 @@ function Task({ task, state, actions }) {
                     return;
                   }
 
-                  actions.editingValue.reset();
+                  actions.editingValuePath.reset();
                 }
               }}
               autoFocus
@@ -170,7 +170,7 @@ function Task({ task, state, actions }) {
                   return;
                 }
 
-                actions.editingValue.set(path);
+                actions.editingValuePath.set(path);
               }}
             >
               <ReactMarkdown source={value} escapeHtml={false} />
@@ -216,8 +216,8 @@ function Task({ task, state, actions }) {
       </ul>
       <div
         tabIndex={
-          equals(path, state.editingContent) ||
-          (!content && !equals(path, state.editingValue))
+          equals(path, state.editingContentPath) ||
+          (!content && !equals(path, state.editingValuePath))
             ? "-1"
             : "0"
         }
@@ -226,30 +226,30 @@ function Task({ task, state, actions }) {
             return;
           }
 
-          if (state.editingContent.length !== 0) {
+          if (state.editingContentPath.length !== 0) {
             return;
           }
 
-          actions.editingContent.set(path);
+          actions.editingContentPath.set(path);
         }}
         onFocus={() => {
-          if (content === "" && state.editingContent.length === 0) {
-            actions.editingContent.set(path);
+          if (content === "" && state.editingContentPath.length === 0) {
+            actions.editingContentPath.set(path);
           }
         }}
         onKeyDown={(event) => {
-          if (state.editingContent.length !== 0) {
+          if (state.editingContentPath.length !== 0) {
             return;
           }
 
           if (event.key === "Enter") {
-            actions.editingContent.set(path);
+            actions.editingContentPath.set(path);
 
             event.preventDefault();
           }
         }}
       >
-        {equals(path, state.editingContent) ? (
+        {equals(path, state.editingContentPath) ? (
           <AceEditor
             mode="markdown"
             theme="tomorrow_night_bright"
@@ -273,7 +273,7 @@ function Task({ task, state, actions }) {
                 bindKey: { win: "Escape", mac: "Escape" },
 
                 exec() {
-                  actions.editingContent.reset();
+                  actions.editingContentPath.reset();
                 },
               },
             ]}

@@ -40,15 +40,15 @@ function makeTask() {
 
 initializeActus([
   defaultActions({
-    editingValue: [],
-    editingContent: [],
+    editingValuePath: [],
+    editingContentPath: [],
     tasks: {},
   }),
   logger(),
   {
     state: {
-      editingValue: [],
-      editingContent: [],
+      editingValuePath: [],
+      editingContentPath: [],
 
       tasks: getTasksWithids([
         {
@@ -154,19 +154,19 @@ initializeActus([
             ? over(
                 lensPath([
                   "tasks",
-                  ...getFullPathToSiblings(state.editingValue),
+                  ...getFullPathToSiblings(state.editingValuePath),
                 ]),
-                remove(last(state.editingValue), 1)
+                remove(last(state.editingValuePath), 1)
               )
             : set(
                 lensPath([
                   "tasks",
-                  ...getFullPath(state.editingValue),
+                  ...getFullPath(state.editingValuePath),
                   "value",
                 ]),
                 trimmedValue
               ),
-          mergeLeft({ editingValue: [] })
+          mergeLeft({ editingValuePath: [] })
         )(state);
       },
 
@@ -175,12 +175,12 @@ initializeActus([
           set(
             lensPath([
               "tasks",
-              ...getFullPath(state.editingContent),
+              ...getFullPath(state.editingContentPath),
               "content",
             ]),
             content.trim()
           ),
-          mergeLeft({ editingContent: [] })
+          mergeLeft({ editingContentPath: [] })
         )(state),
 
       addTask: (ignore, state) =>
@@ -192,7 +192,7 @@ initializeActus([
               },
             },
           }),
-          mergeLeft({ editingValue: [0, state.tasks[0].children.length] })
+          mergeLeft({ editingValuePath: [0, state.tasks[0].children.length] })
         )(state),
 
       addNextTask: (parentPath, state) =>
@@ -202,7 +202,7 @@ initializeActus([
             append(makeTask())
           ),
           mergeLeft({
-            editingValue: [
+            editingValuePath: [
               ...init(parentPath),
               view(
                 lensPath([
@@ -223,7 +223,7 @@ initializeActus([
             append(makeTask())
           ),
           mergeLeft({
-            editingValue: [
+            editingValuePath: [
               ...parentPath,
               view(
                 lensPath([
