@@ -46,27 +46,33 @@ function handleDelete(children, callback) {
 function Value({ task, state, actions }) {
   const { value, children, path } = task;
 
+  function handleSave(event) {
+    actions.setValue(event.target.value);
+
+    if (event.ctrlKey) {
+      actions.addNextTask(path);
+
+      return;
+    }
+
+    if (event.shiftKey) {
+      actions.addSubtask(path);
+    }
+  }
+
   function handleEnterKey(event) {
-    if (event.target.value.trim() === "" && children.length !== 0) {
+    if (event.target.value.trim() !== "") {
+      handleSave(event);
+
+      return;
+    }
+
+    if (children.length !== 0) {
       confirmRemoval(
         children,
         () => actions.setValue(""),
         actions.editingValuePath.reset
       );
-
-      return;
-    }
-
-    actions.setValue(event.target.value);
-
-    if (event.target.value.trim() !== "") {
-      if (event.ctrlKey) {
-        actions.addNextTask(path);
-      }
-
-      if (event.shiftKey) {
-        actions.addSubtask(path);
-      }
     }
   }
 
@@ -127,7 +133,7 @@ function Content({ task, state, actions }) {
   const { content, path } = task;
 
   function handleContentClick() {
-    if (window.getSelection().type === "Range") {
+    if (isSelectingText()) {
       return;
     }
 
