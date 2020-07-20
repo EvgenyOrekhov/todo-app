@@ -11,13 +11,11 @@ import {
   intersperse,
   pipe,
   mergeLeft,
-  evolve,
   init,
   last,
   remove,
   append,
-  view,
-  path as getByPath,
+  path as getAtPath,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
@@ -27,6 +25,14 @@ import { getTasksWithids } from "./selectors.js";
 const getFullPath = intersperse("children");
 
 const getFullPathToSiblings = pipe(init, getFullPath, append("children"));
+
+function updateAtPath(path, callback) {
+  return over(lensPath(path), callback);
+}
+
+function setAtPath(path, value) {
+  return set(lensPath(path), value);
+}
 
 function makeTask() {
   return {
@@ -104,10 +110,10 @@ initializeActus([
 
     actions: {
       tasks: {
-        toggle: (path) => over(lensPath([...getFullPath(path), "isDone"]), not),
+        toggle: (path) => updateAtPath([...getFullPath(path), "isDone"], not),
 
         delete: (path) =>
-          over(lensPath(getFullPathToSiblings(path)), remove(last(path), 1)),
+          updateAtPath(getFullPathToSiblings(path), remove(last(path), 1)),
 
         moveUp: (path, tasks) => {
           if (last(path) === 0) {
@@ -117,17 +123,17 @@ initializeActus([
           const taskPath = getFullPath(path);
           const previousTaskPath = [...init(taskPath), last(taskPath) - 1];
 
-          const task = getByPath(taskPath, tasks);
-          const previousTask = getByPath(previousTaskPath, tasks);
+          const task = getAtPath(taskPath, tasks);
+          const previousTask = getAtPath(previousTaskPath, tasks);
 
           return pipe(
-            set(lensPath(previousTaskPath), task),
-            set(lensPath(taskPath), previousTask)
+            setAtPath(previousTaskPath, task),
+            setAtPath(taskPath, previousTask)
           )(tasks);
         },
 
         moveDown: (path, tasks) => {
-          const siblings = getByPath(getFullPathToSiblings(path), tasks);
+          const siblings = getAtPath(getFullPathToSiblings(path), tasks);
 
           if (last(path) === siblings.length - 1) {
             return tasks;
@@ -136,12 +142,12 @@ initializeActus([
           const taskPath = getFullPath(path);
           const nextTaskPath = [...init(taskPath), last(taskPath) + 1];
 
-          const task = getByPath(taskPath, tasks);
-          const nextTask = getByPath(nextTaskPath, tasks);
+          const task = getAtPath(taskPath, tasks);
+          const nextTask = getAtPath(nextTaskPath, tasks);
 
           return pipe(
-            set(lensPath(nextTaskPath), task),
-            set(lensPath(taskPath), nextTask)
+            setAtPath(nextTaskPath, task),
+            setAtPath(taskPath, nextTask)
           )(tasks);
         },
       },
@@ -151,19 +157,12 @@ initializeActus([
 
         return pipe(
           trimmedValue === ""
-            ? over(
-                lensPath([
-                  "tasks",
-                  ...getFullPathToSiblings(state.editingValuePath),
-                ]),
+            ? updateAtPath(
+                ["tasks", ...getFullPathToSiblings(state.editingValuePath)],
                 remove(last(state.editingValuePath), 1)
               )
-            : set(
-                lensPath([
-                  "tasks",
-                  ...getFullPath(state.editingValuePath),
-                  "value",
-                ]),
+            : setAtPath(
+                ["tasks", ...getFullPath(state.editingValuePath), "value"],
                 trimmedValue
               ),
           mergeLeft({ editingValuePath: [] })
@@ -172,12 +171,8 @@ initializeActus([
 
       setContent: (content, state) =>
         pipe(
-          set(
-            lensPath([
-              "tasks",
-              ...getFullPath(state.editingContentPath),
-              "content",
-            ]),
+          setAtPath(
+            ["tasks", ...getFullPath(state.editingContentPath), "content"],
             content.trim()
           ),
           mergeLeft({ editingContentPath: [] })
@@ -185,31 +180,21 @@ initializeActus([
 
       addTask: (ignore, state) =>
         pipe(
-          evolve({
-            tasks: {
-              "0": {
-                children: append(makeTask()),
-              },
-            },
-          }),
+          updateAtPath(["tasks", 0, "children"], append(makeTask())),
           mergeLeft({ editingValuePath: [0, state.tasks[0].children.length] })
         )(state),
 
       addNextTask: (parentPath, state) =>
         pipe(
-          over(
-            lensPath(["tasks", ...getFullPathToSiblings(parentPath)]),
+          updateAtPath(
+            ["tasks", ...getFullPathToSiblings(parentPath)],
             append(makeTask())
           ),
           mergeLeft({
             editingValuePath: [
               ...init(parentPath),
-              view(
-                lensPath([
-                  "tasks",
-                  ...getFullPathToSiblings(parentPath),
-                  "length",
-                ]),
+              getAtPath(
+                ["tasks", ...getFullPathToSiblings(parentPath), "length"],
                 state
               ),
             ],
@@ -218,20 +203,15 @@ initializeActus([
 
       addSubtask: (parentPath, state) =>
         pipe(
-          over(
-            lensPath(["tasks", ...getFullPath(parentPath), "children"]),
+          updateAtPath(
+            ["tasks", ...getFullPath(parentPath), "children"],
             append(makeTask())
           ),
           mergeLeft({
             editingValuePath: [
               ...parentPath,
-              view(
-                lensPath([
-                  "tasks",
-                  ...getFullPath(parentPath),
-                  "children",
-                  "length",
-                ]),
+              getAtPath(
+                ["tasks", ...getFullPath(parentPath), "children", "length"],
                 state
               ),
             ],
