@@ -16,6 +16,7 @@ import {
   remove,
   append,
   path as getAtPath,
+  evolve,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
@@ -32,6 +33,10 @@ function updateAtPath(path, callback) {
 
 function setAtPath(path, value) {
   return set(lensPath(path), value);
+}
+
+function deleteAtPath(path) {
+  return updateAtPath(getFullPathToSiblings(path), remove(last(path), 1));
 }
 
 function makeTask() {
@@ -112,8 +117,7 @@ initializeActus([
       tasks: {
         toggle: (path) => updateAtPath([...getFullPath(path), "isDone"], not),
 
-        delete: (path) =>
-          updateAtPath(getFullPathToSiblings(path), remove(last(path), 1)),
+        delete: deleteAtPath,
 
         moveUp: (path, tasks) => {
           if (last(path) === 0) {
@@ -156,15 +160,15 @@ initializeActus([
         const trimmedValue = value.trim();
 
         return pipe(
-          trimmedValue === ""
-            ? updateAtPath(
-                ["tasks", ...getFullPathToSiblings(state.editingValuePath)],
-                remove(last(state.editingValuePath), 1)
-              )
-            : setAtPath(
-                ["tasks", ...getFullPath(state.editingValuePath), "value"],
-                trimmedValue
-              ),
+          evolve({
+            tasks:
+              trimmedValue === ""
+                ? deleteAtPath(state.editingValuePath)
+                : setAtPath(
+                    [...getFullPath(state.editingValuePath), "value"],
+                    trimmedValue
+                  ),
+          }),
           mergeLeft({ editingValuePath: [] })
         )(state);
       },
