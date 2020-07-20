@@ -42,7 +42,7 @@ function Task({ task, state, actions }) {
           }
 
           if (event.key === " ") {
-            actions.toggleTask(id);
+            actions.tasks.toggle(id);
 
             event.preventDefault();
 
@@ -76,7 +76,7 @@ function Task({ task, state, actions }) {
                   }?`
                 )
               ) {
-                actions.deleteTask(id);
+                actions.tasks.delete(id);
 
                 return;
               }
@@ -84,12 +84,12 @@ function Task({ task, state, actions }) {
               return;
             }
 
-            actions.deleteTask(id);
+            actions.tasks.delete(id);
           }
 
           if (event.shiftKey) {
             if (event.key === "ArrowUp") {
-              actions.moveUp(id);
+              actions.tasks.moveUp(id);
 
               setShouldScrollIntoView(true);
 
@@ -97,7 +97,7 @@ function Task({ task, state, actions }) {
             }
 
             if (event.key === "ArrowDown") {
-              actions.moveDown(id);
+              actions.tasks.moveDown(id);
 
               setShouldScrollIntoView(true);
             }
@@ -108,7 +108,7 @@ function Task({ task, state, actions }) {
           type="checkbox"
           checked={isDone}
           tabIndex="-1"
-          onChange={() => actions.toggleTask(id)}
+          onChange={() => actions.tasks.toggle(id)}
         />
         <div className="value">
           {equals(id, state.editingValue) ? (
@@ -192,7 +192,7 @@ function Task({ task, state, actions }) {
                     }?`
                   )
                 ) {
-                  actions.deleteTask(id);
+                  actions.tasks.delete(id);
 
                   return;
                 }
@@ -200,7 +200,7 @@ function Task({ task, state, actions }) {
                 return;
               }
 
-              actions.deleteTask(id);
+              actions.tasks.delete(id);
             }}
           >
             ✕

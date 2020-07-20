@@ -99,39 +99,74 @@ initializeActus([
     },
 
     actions: {
-      toggleTask: (id, state) =>
-        over(
-          lensPath(["tasks", ...intersperse("children", id), "isDone"]),
-          not,
-          state
-        ),
+      tasks: {
+        toggle: (id) =>
+          over(lensPath([...intersperse("children", id), "isDone"]), not),
+
+        delete: (id) =>
+          over(
+            lensPath([...intersperse("children", init(id)), "children"]),
+            remove(last(id), 1)
+          ),
+
+        moveUp: (id, tasks) => {
+          if (last(id) === 0) {
+            return tasks;
+          }
+
+          const taskId = intersperse("children", id);
+          const previousTaskId = [...init(taskId), last(taskId) - 1];
+
+          const task = path(taskId, tasks);
+          const previousTask = path(previousTaskId, tasks);
+
+          return pipe(
+            set(lensPath(previousTaskId), task),
+            set(lensPath(taskId), previousTask)
+          )(tasks);
+        },
+
+        moveDown: (id, tasks) => {
+          const parentTask = path(intersperse("children", init(id)), tasks);
+
+          if (last(id) === parentTask.children.length - 1) {
+            return tasks;
+          }
+
+          const taskId = intersperse("children", id);
+          const nextTaskId = [...init(taskId), last(taskId) + 1];
+
+          const task = path(taskId, tasks);
+          const nextTask = path(nextTaskId, tasks);
+
+          return pipe(
+            set(lensPath(nextTaskId), task),
+            set(lensPath(taskId), nextTask)
+          )(tasks);
+        },
+      },
 
       setValue: (value, state) => {
         const trimmedValue = value.trim();
 
-        if (trimmedValue === "") {
-          return pipe(
-            over(
-              lensPath([
-                "tasks",
-                ...intersperse("children", init(state.editingValue)),
-                "children",
-              ]),
-              remove(last(state.editingValue), 1)
-            ),
-            mergeLeft({ editingValue: [] })
-          )(state);
-        }
-
         return pipe(
-          set(
-            lensPath([
-              "tasks",
-              ...intersperse("children", state.editingValue),
-              "value",
-            ]),
-            trimmedValue
-          ),
+          trimmedValue === ""
+            ? over(
+                lensPath([
+                  "tasks",
+                  ...intersperse("children", init(state.editingValue)),
+                  "children",
+                ]),
+                remove(last(state.editingValue), 1)
+              )
+            : set(
+                lensPath([
+                  "tasks",
+                  ...intersperse("children", state.editingValue),
+                  "value",
+                ]),
+                trimmedValue
+              ),
           mergeLeft({ editingValue: [] })
         )(state);
       },
@@ -212,49 +247,6 @@ initializeActus([
             ],
           })
         )(state),
-
-      deleteTask: (id, state) =>
-        over(
-          lensPath(["tasks", ...intersperse("children", init(id)), "children"]),
-          remove(last(id), 1),
-          state
-        ),
-
-      moveUp: (id, state) => {
-        if (last(id) === 0) {
-          return state;
-        }
-
-        const taskId = intersperse("children", id);
-        const previousTaskId = [...init(taskId), last(taskId) - 1];
-
-        const task = path(taskId, state.tasks);
-        const previousTask = path(previousTaskId, state.tasks);
-
-        return pipe(
-          set(lensPath(["tasks", ...previousTaskId]), task),
-          set(lensPath(["tasks", ...taskId]), previousTask)
-        )(state);
-      },
-
-      moveDown: (id, state) => {
-        const parentTask = path(intersperse("children", init(id)), state.tasks);
-
-        if (last(id) === parentTask.children.length - 1) {
-          return state;
-        }
-
-        const taskId = intersperse("children", id);
-        const nextTaskId = [...init(taskId), last(taskId) + 1];
-
-        const task = path(taskId, state.tasks);
-        const nextTask = path(nextTaskId, state.tasks);
-
-        return pipe(
-          set(lensPath(["tasks", ...nextTaskId]), task),
-          set(lensPath(["tasks", ...taskId]), nextTask)
-        )(state);
-      },
     },
 
     subscribers: [
