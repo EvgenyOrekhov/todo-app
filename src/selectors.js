@@ -16,12 +16,12 @@ function getTasksWithPaths(tasks) {
   return setPaths(tasks, []);
 }
 
-function getTasksWithids(tasks) {
+function getTasksWithIds(tasks) {
   return tasks.map((task) => ({
     ...task,
     id: uuidv4(),
-    children: getTasksWithids(task.children),
+    children: getTasksWithIds(task.children),
   }));
 }
 
-export { getTasksWithPaths, getTasksWithids };
+export { getTasksWithPaths, getTasksWithIds };

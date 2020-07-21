@@ -1,12 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 import { init } from "actus";
 import defaultActions from "actus-default-actions";
 import logger from "actus-logger";
 
 import App from "./App.jsx";
 import actions from "./actions.js";
-import { getTasksWithids } from "./selectors.js";
+import { getTasksWithIds } from "./selectors.js";
 
 init([
   defaultActions({
@@ -20,7 +20,7 @@ init([
       editingValuePath: [],
       editingContentPath: [],
 
-      tasks: getTasksWithids([
+      tasks: getTasksWithIds([
         {
           value: "default",
 
@@ -76,7 +76,7 @@ init([
 
     subscribers: [
       ({ state, actions: boundActions }) => {
-        ReactDOM.render(
+        render(
           <React.StrictMode>
             <App actions={boundActions} state={state} />
           </React.StrictMode>,
