@@ -12,7 +12,7 @@ init([
   defaultActions({
     editingValuePath: [],
     editingContentPath: [],
-    tasks: {},
+    tasks: [],
   }),
   logger(),
   {
