@@ -34,7 +34,11 @@ function Value({ task, state, actions }) {
         () => actions.setValue(""),
         actions.editingValuePath.reset
       );
+
+      return;
     }
+
+    actions.setValue("");
   }
 
   function handleKeyDown(event) {
