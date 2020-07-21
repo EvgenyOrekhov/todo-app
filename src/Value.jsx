@@ -31,14 +31,14 @@ function Value({ task, state, actions }) {
     if (children.length !== 0) {
       confirmRemoval(
         children,
-        () => actions.setValue(""),
+        actions.deleteCurrentlyEditedTask,
         actions.editingValuePath.reset
       );
 
       return;
     }
 
-    actions.setValue("");
+    actions.deleteCurrentlyEditedTask();
   }
 
   function handleKeyDown(event) {
@@ -50,7 +50,7 @@ function Value({ task, state, actions }) {
 
     if (event.key === "Escape") {
       if (value === "") {
-        actions.setValue("");
+        actions.deleteCurrentlyEditedTask();
 
         return;
       }

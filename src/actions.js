@@ -89,8 +89,22 @@ function makeSetter(property) {
   return (path, value) => setAtPath([...getFullPath(path), property], value);
 }
 
-const setValue = makeSetter("value");
-const setContent = makeSetter("content");
+const setValueAtPath = makeSetter("value");
+const setContentAtPath = makeSetter("content");
+
+function setValue(value, state) {
+  const trimmedValue = value.trim();
+
+  return pipe(
+    evolve({
+      tasks:
+        trimmedValue === ""
+          ? deleteAtPath(state.editingValuePath)
+          : setValueAtPath(state.editingValuePath, trimmedValue),
+    }),
+    mergeLeft({ editingValuePath: [] })
+  )(state);
+}
 
 const actions = {
   tasks: {
@@ -104,27 +118,17 @@ const actions = {
     moveDown: move(1),
   },
 
-  setValue: (value, state) => {
-    const trimmedValue = value.trim();
-
-    return pipe(
-      evolve({
-        tasks:
-          trimmedValue === ""
-            ? deleteAtPath(state.editingValuePath)
-            : setValue(state.editingValuePath, trimmedValue),
-      }),
-      mergeLeft({ editingValuePath: [] })
-    )(state);
-  },
+  setValue,
 
   setContent: (content, state) =>
     pipe(
-      evolve({ tasks: setContent(state.editingContentPath, content) }),
+      evolve({ tasks: setContentAtPath(state.editingContentPath, content) }),
       mergeLeft({ editingContentPath: [] })
     )(state),
 
   addTask: (ignore, state) => addNextTask([0, 0], state),
+
+  deleteCurrentlyEditedTask: (ignore, state) => setValue("", state),
 
   addNextTask,
 
