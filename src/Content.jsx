@@ -26,9 +26,9 @@ function Content({ task, state, actions }) {
     }
 
     if (event.key === "Enter") {
-      actions.editingContentPath.set(path);
-
       event.preventDefault();
+
+      actions.editingContentPath.set(path);
     }
   }
 

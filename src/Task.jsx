@@ -24,9 +24,9 @@ function Task({ task, state, actions }) {
   const [reference, setShouldScrollIntoView] = useScrollIntoView();
 
   function handleSpaceKey(event) {
-    actions.tasks.toggle(path);
-
     event.preventDefault();
+
+    actions.tasks.toggle(path);
   }
 
   function handleEnterKey(event) {
