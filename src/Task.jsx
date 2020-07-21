@@ -4,18 +4,24 @@ import Value from "./Value.jsx";
 import Content from "./Content.jsx";
 import { handleDelete } from "./util.js";
 
-function Task({ task, state, actions }) {
-  const { isDone, children, path, id } = task;
-
-  const taskReference = useRef();
+function useScrollIntoView() {
+  const reference = useRef();
   const [shouldScrollIntoView, setShouldScrollIntoView] = useState(false);
 
   useEffect(() => {
     if (shouldScrollIntoView) {
-      taskReference.current.scrollIntoView(false);
+      reference.current.scrollIntoView(false);
       setShouldScrollIntoView(false);
     }
   }, [shouldScrollIntoView]);
+
+  return [reference, () => setShouldScrollIntoView(true)];
+}
+
+function Task({ task, state, actions }) {
+  const { isDone, children, path, id } = task;
+
+  const [reference, setShouldScrollIntoView] = useScrollIntoView();
 
   function handleSpaceKey(event) {
     actions.tasks.toggle(path);
@@ -48,7 +54,7 @@ function Task({ task, state, actions }) {
       if (event.key === "ArrowUp") {
         actions.tasks.moveUp(path);
 
-        setShouldScrollIntoView(true);
+        setShouldScrollIntoView();
 
         return;
       }
@@ -56,7 +62,7 @@ function Task({ task, state, actions }) {
       if (event.key === "ArrowDown") {
         actions.tasks.moveDown(path);
 
-        setShouldScrollIntoView(true);
+        setShouldScrollIntoView();
       }
     }
   }
@@ -96,7 +102,7 @@ function Task({ task, state, actions }) {
       <div
         className="task"
         onKeyDown={handleKeyDown}
-        ref={taskReference}
+        ref={reference}
         tabIndex="0"
       >
         <input
