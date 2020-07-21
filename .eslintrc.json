@@ -3,7 +3,9 @@
     "hardcore",
     "hardcore/fp",
     "plugin:jest/all",
-    "plugin:jest-formatting/strict"
+    "plugin:jest-formatting/strict",
+    "plugin:react/all",
+    "prettier/react"
   ],
 
   "parserOptions": {
@@ -22,6 +24,12 @@
     "name": "off",
     "status": "off",
     "find": "off"
+  },
+
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   },
 
   "rules": {
@@ -47,27 +55,17 @@
 
     "optimize-regex/optimize-regex": "off",
     "security/detect-unsafe-regex": "off",
-    "jest/require-top-level-describe": "off"
+    "jest/require-top-level-describe": "off",
+
+    "react/prop-types": "off",
+    "react/jsx-no-bind": "off",
+    "react/jsx-no-literals": "off",
+    "react/forbid-component-props": "off"
   },
 
   "overrides": [
     {
-      "files": ["*.jsx"],
-
-      "extends": ["plugin:react/all", "prettier/react"],
-
-      "settings": {
-        "react": {
-          "version": "detect"
-        }
-      },
-
-      "rules": {
-        "react/prop-types": "off",
-        "react/jsx-no-bind": "off",
-        "react/jsx-no-literals": "off",
-        "react/forbid-component-props": "off"
-      }
+      "files": ["*.jsx"]
     },
 
     {
