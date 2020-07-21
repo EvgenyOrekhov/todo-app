@@ -5,7 +5,7 @@
     "format": "prettier --write .",
     "lint": "run-p --aggregate-output lint:**",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "lint:js": "eslint .",
+    "lint:js": "eslint . --ext .js,.jsx",
     "lint:prettier": "prettier --check .",
     "start": "snowpack dev",
     "test": "jest"
@@ -19,7 +19,7 @@
   "lint-staged": {
     "*.css": "stylelint --fix",
     "*.{js,jsx,css,json,md,html,yml,yaml}": "prettier --write",
-    "*.{js,jsx,json}": "eslint --fix"
+    "*.{js,jsx,json}": "eslint --ext .js,.jsx --fix"
   },
   "dependencies": {
     "ace-builds": "^1.4.12",

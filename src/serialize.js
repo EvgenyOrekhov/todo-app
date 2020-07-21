@@ -20,6 +20,7 @@ function serializeChildren(children, level) {
   );
 }
 
+// eslint-disable-next-line import/no-unused-modules
 export default function serialize(tasks) {
   return Object.fromEntries(
     tasks.map(({ value, children }) => [value, serializeChildren(children, 0)])
