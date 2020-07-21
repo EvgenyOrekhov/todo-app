@@ -5,6 +5,7 @@
     "plugin:jest/all",
     "plugin:jest-formatting/strict",
     "plugin:react/all",
+    "plugin:react-hooks/recommended",
     "prettier/react"
   ],
 
