@@ -103,6 +103,7 @@ function Task({ task, state, actions }) {
         className="task"
         onKeyDown={handleKeyDown}
         ref={reference}
+        role="button"
         tabIndex="0"
       >
         <input

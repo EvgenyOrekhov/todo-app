@@ -73,11 +73,13 @@ function Value({ task, state, actions }) {
           onKeyDown={handleKeyDown}
         />
       ) : (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- key events and focus are handled by the parent
         <div
           className="clickable-value"
           onClick={() =>
             !isSelectingText() && actions.editingValuePath.set(path)
           }
+          role="button"
         >
           <ReactMarkdown escapeHtml={false} source={value} />
         </div>

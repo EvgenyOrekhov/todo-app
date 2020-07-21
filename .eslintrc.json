@@ -6,6 +6,7 @@
     "plugin:jest-formatting/strict",
     "plugin:react/all",
     "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
     "prettier/react"
   ],
 
@@ -61,7 +62,9 @@
     "react/prop-types": "off",
     "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
-    "react/forbid-component-props": "off"
+    "react/forbid-component-props": "off",
+
+    "jsx-a11y/no-autofocus": "off"
   },
 
   "overrides": [

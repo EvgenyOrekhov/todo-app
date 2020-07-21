@@ -37,6 +37,7 @@ function Content({ task, state, actions }) {
       onClick={handleContentClick}
       onFocus={handleContentFocus}
       onKeyDown={handleContentKeyDown}
+      role="button"
       tabIndex={
         equals(path, state.editingContentPath) ||
         (!content && !equals(path, state.editingValuePath))
