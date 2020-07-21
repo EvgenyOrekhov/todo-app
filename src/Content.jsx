@@ -9,15 +9,9 @@ function Content({ task, state, actions }) {
   const { content, path } = task;
 
   function handleContentClick() {
-    if (isSelectingText()) {
-      return;
+    if (!isSelectingText() && state.editingContentPath.length === 0) {
+      actions.editingContentPath.set(path);
     }
-
-    if (state.editingContentPath.length !== 0) {
-      return;
-    }
-
-    actions.editingContentPath.set(path);
   }
 
   function handleContentFocus() {
