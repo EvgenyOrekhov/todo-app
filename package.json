@@ -26,6 +26,7 @@
     "actus": "^0.2.0-alpha.5",
     "actus-default-actions": "0.1.0-alpha.1",
     "actus-logger": "^0.2.0-alpha.0",
+    "mergerino": "^0.4.0",
     "ramda": "^0.27.0",
     "react": "^16.13.0",
     "react-ace": "^9.1.1",
