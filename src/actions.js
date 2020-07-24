@@ -17,12 +17,12 @@ const getFullPath = pipe(intersperse("children"), map(String));
 
 const getFullPathToSiblings = pipe(init, getFullPath, append("children"));
 
-function makeObject(path, value) {
+function setAtPath(path, value) {
   return assocPath(path, value, {});
 }
 
 const deleteAtPath = curry((path, tasks) =>
-  merge(tasks, makeObject(getFullPath(path), undefined))
+  merge(tasks, setAtPath(getFullPath(path), undefined))
 );
 
 function move(indexShift) {
@@ -42,8 +42,8 @@ function move(indexShift) {
 
     return merge(
       tasks,
-      makeObject(previousTaskPath, () => task),
-      makeObject(taskPath, () => previousTask)
+      setAtPath(previousTaskPath, () => task),
+      setAtPath(taskPath, () => previousTask)
     );
   };
 }
@@ -64,7 +64,7 @@ function appendNewTask(tasks) {
 
 function addNextTask(parentPath, state) {
   return merge(state, {
-    tasks: makeObject(getFullPathToSiblings(parentPath), appendNewTask),
+    tasks: setAtPath(getFullPathToSiblings(parentPath), appendNewTask),
 
     editingValuePath: [
       ...init(parentPath),
@@ -77,7 +77,7 @@ function addNextTask(parentPath, state) {
 }
 
 function makeSetter(property) {
-  return (path, value) => makeObject([...getFullPath(path), property], value);
+  return (path, value) => setAtPath([...getFullPath(path), property], value);
 }
 
 const setValueAtPath = makeSetter("value");
