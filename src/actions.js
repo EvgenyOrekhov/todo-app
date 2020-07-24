@@ -1,35 +1,29 @@
+import merge from "mergerino";
 import {
-  over,
-  set,
   not,
-  lensPath,
   intersperse,
   pipe,
-  mergeLeft,
   init,
   last,
-  remove,
   append,
   path as getAtPath,
-  evolve,
+  assocPath,
+  map,
+  curry,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
-const getFullPath = intersperse("children");
+const getFullPath = pipe(intersperse("children"), map(String));
 
 const getFullPathToSiblings = pipe(init, getFullPath, append("children"));
 
-function updateAtPath(path, callback) {
-  return over(lensPath(path), callback);
+function makeObject(path, value) {
+  return assocPath(path, value, {});
 }
 
-function setAtPath(path, value) {
-  return set(lensPath(path), value);
-}
-
-function deleteAtPath(path) {
-  return updateAtPath(getFullPathToSiblings(path), remove(last(path), 1));
-}
+const deleteAtPath = curry((path, tasks) =>
+  merge(tasks, makeObject(getFullPath(path), undefined))
+);
 
 function move(indexShift) {
   return (path, tasks) => {
@@ -41,15 +35,16 @@ function move(indexShift) {
     }
 
     const taskPath = getFullPath(path);
-    const previousTaskPath = [...init(taskPath), newIndex];
+    const previousTaskPath = getFullPath([...init(path), newIndex]);
 
     const task = getAtPath(taskPath, tasks);
     const previousTask = getAtPath(previousTaskPath, tasks);
 
-    return pipe(
-      setAtPath(previousTaskPath, task),
-      setAtPath(taskPath, previousTask)
-    )(tasks);
+    return merge(
+      tasks,
+      makeObject(previousTaskPath, () => task),
+      makeObject(taskPath, () => previousTask)
+    );
   };
 }
 
@@ -68,47 +63,44 @@ function appendNewTask(tasks) {
 }
 
 function addNextTask(parentPath, state) {
-  return pipe(
-    updateAtPath(
-      ["tasks", ...getFullPathToSiblings(parentPath)],
-      appendNewTask
-    ),
-    mergeLeft({
-      editingValuePath: [
-        ...init(parentPath),
-        getAtPath(
-          ["tasks", ...getFullPathToSiblings(parentPath), "length"],
-          state
-        ),
-      ],
-    })
-  )(state);
+  return merge(state, {
+    tasks: makeObject(getFullPathToSiblings(parentPath), appendNewTask),
+
+    editingValuePath: [
+      ...init(parentPath),
+      getAtPath(
+        ["tasks", ...getFullPathToSiblings(parentPath), "length"],
+        state
+      ),
+    ],
+  });
 }
 
 function makeSetter(property) {
-  return (path, value) => setAtPath([...getFullPath(path), property], value);
+  return (path, value) => makeObject([...getFullPath(path), property], value);
 }
 
 const setValueAtPath = makeSetter("value");
 const setContentAtPath = makeSetter("content");
+const setIsDoneAtPath = makeSetter("isDone");
+const setChildrenAtPath = makeSetter("children");
 
 function setValue(value, state) {
   const trimmedValue = value.trim();
 
-  return pipe(
-    evolve({
-      tasks:
-        trimmedValue === ""
-          ? deleteAtPath(state.editingValuePath)
-          : setValueAtPath(state.editingValuePath, trimmedValue),
-    }),
-    mergeLeft({ editingValuePath: [] })
-  )(state);
+  return merge(state, {
+    tasks:
+      trimmedValue === ""
+        ? deleteAtPath(state.editingValuePath)
+        : setValueAtPath(state.editingValuePath, trimmedValue),
+
+    editingValuePath: [],
+  });
 }
 
 const actions = {
   tasks: {
-    toggle: (path) => updateAtPath([...getFullPath(path), "isDone"], not),
+    toggle: (path, tasks) => merge(tasks, setIsDoneAtPath(path, not)),
 
     delete: deleteAtPath,
 
@@ -121,10 +113,10 @@ const actions = {
   setValue,
 
   setContent: (content, state) =>
-    pipe(
-      evolve({ tasks: setContentAtPath(state.editingContentPath, content) }),
-      mergeLeft({ editingContentPath: [] })
-    )(state),
+    merge(state, {
+      tasks: setContentAtPath(state.editingContentPath, content),
+      editingContentPath: [],
+    }),
 
   addTask: (ignore, state) => addNextTask([0, 0], state),
 
@@ -133,21 +125,17 @@ const actions = {
   addNextTask,
 
   addSubtask: (parentPath, state) =>
-    pipe(
-      updateAtPath(
-        ["tasks", ...getFullPath(parentPath), "children"],
-        appendNewTask
-      ),
-      mergeLeft({
-        editingValuePath: [
-          ...parentPath,
-          getAtPath(
-            ["tasks", ...getFullPath(parentPath), "children", "length"],
-            state
-          ),
-        ],
-      })
-    )(state),
+    merge(state, {
+      tasks: setChildrenAtPath(parentPath, appendNewTask),
+
+      editingValuePath: [
+        ...parentPath,
+        getAtPath(
+          ["tasks", ...getFullPath(parentPath), "children", "length"],
+          state
+        ),
+      ],
+    }),
 };
 
 // eslint-disable-next-line import/no-unused-modules
