@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import { init } from "actus";
 import defaultActions from "actus-default-actions";
 import logger from "actus-logger";
+import merge from "mergerino";
 
 import App from "./App.jsx";
 import actions from "./actions.js";
@@ -73,6 +74,8 @@ init([
     },
 
     actions,
+
+    getNextState: merge,
 
     subscribers: [
       ({ state, actions: boundActions }) => {
