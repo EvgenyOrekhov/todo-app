@@ -1,6 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
+import { useHotkeys } from "react-hotkeys-hook";
 import { equals } from "ramda";
 
 import { isSelectingText } from "./util.js";
@@ -20,23 +21,16 @@ function Content({ task, state, actions }) {
     }
   }
 
-  function handleContentKeyDown(event) {
-    if (state.editingContentPath.length !== 0) {
-      return;
-    }
-
-    if (event.key === "Enter") {
-      event.preventDefault();
-
-      actions.editingContentPath.set(path);
-    }
-  }
+  const reference = useHotkeys("enter", () => {
+    actions.editingContentPath.set(path);
+  });
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- handled by useHotKeys()
     <div
       onClick={handleContentClick}
       onFocus={handleContentFocus}
-      onKeyDown={handleContentKeyDown}
+      ref={reference}
       role="button"
       tabIndex={
         equals(path, state.editingContentPath) ||
