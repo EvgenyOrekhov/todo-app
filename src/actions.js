@@ -1,4 +1,3 @@
-import merge from "mergerino";
 import {
   not,
   intersperse,
@@ -9,7 +8,6 @@ import {
   path as getAtPath,
   assocPath,
   map,
-  curry,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
@@ -21,9 +19,9 @@ function setAtPath(path, value) {
   return assocPath(path, value, {});
 }
 
-const deleteAtPath = curry((path, tasks) =>
-  merge(tasks, setAtPath(getFullPath(path), undefined))
-);
+function deleteAtPath(path) {
+  return setAtPath(getFullPath(path), undefined);
+}
 
 function move(indexShift) {
   return (path, tasks) => {
@@ -40,11 +38,10 @@ function move(indexShift) {
     const task = getAtPath(taskPath, tasks);
     const previousTask = getAtPath(previousTaskPath, tasks);
 
-    return merge(
-      tasks,
+    return [
       setAtPath(previousTaskPath, () => task),
-      setAtPath(taskPath, () => previousTask)
-    );
+      setAtPath(taskPath, () => previousTask),
+    ];
   };
 }
 
@@ -63,7 +60,7 @@ function appendNewTask(tasks) {
 }
 
 function addNextTask(parentPath, state) {
-  return merge(state, {
+  return {
     tasks: setAtPath(getFullPathToSiblings(parentPath), appendNewTask),
 
     editingValuePath: [
@@ -73,7 +70,7 @@ function addNextTask(parentPath, state) {
         state
       ),
     ],
-  });
+  };
 }
 
 function makeSetter(property) {
@@ -88,19 +85,19 @@ const setChildrenAtPath = makeSetter("children");
 function setValue(value, state) {
   const trimmedValue = value.trim();
 
-  return merge(state, {
+  return {
     tasks:
       trimmedValue === ""
         ? deleteAtPath(state.editingValuePath)
         : setValueAtPath(state.editingValuePath, trimmedValue),
 
     editingValuePath: [],
-  });
+  };
 }
 
 const actions = {
   tasks: {
-    toggle: (path, tasks) => merge(tasks, setIsDoneAtPath(path, not)),
+    toggle: (path) => setIsDoneAtPath(path, not),
 
     delete: deleteAtPath,
 
@@ -112,11 +109,10 @@ const actions = {
 
   setValue,
 
-  setContent: (content, state) =>
-    merge(state, {
-      tasks: setContentAtPath(state.editingContentPath, content),
-      editingContentPath: [],
-    }),
+  setContent: (content, state) => ({
+    tasks: setContentAtPath(state.editingContentPath, content),
+    editingContentPath: [],
+  }),
 
   addTask: (ignore, state) => addNextTask([0, 0], state),
 
@@ -124,18 +120,17 @@ const actions = {
 
   addNextTask,
 
-  addSubtask: (parentPath, state) =>
-    merge(state, {
-      tasks: setChildrenAtPath(parentPath, appendNewTask),
+  addSubtask: (parentPath, state) => ({
+    tasks: setChildrenAtPath(parentPath, appendNewTask),
 
-      editingValuePath: [
-        ...parentPath,
-        getAtPath(
-          ["tasks", ...getFullPath(parentPath), "children", "length"],
-          state
-        ),
-      ],
-    }),
+    editingValuePath: [
+      ...parentPath,
+      getAtPath(
+        ["tasks", ...getFullPath(parentPath), "children", "length"],
+        state
+      ),
+    ],
+  }),
 };
 
 // eslint-disable-next-line import/no-unused-modules
