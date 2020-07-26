@@ -17,7 +17,7 @@ function Content({ task, state, actions }) {
   }
 
   function handleContentFocus() {
-    if (state.editingContentPath.length === 0 && content === "") {
+    if (!state.isEditingContent && content === "") {
       actions.editingContentPath.set(path);
     }
   }
@@ -35,9 +35,7 @@ function Content({ task, state, actions }) {
   return (
     <div
       onFocus={handleContentFocus}
-      onKeyDown={
-        state.editingContentPath.length === 0 ? handleContentKeyDown : undefined
-      }
+      onKeyDown={state.isEditingContent ? undefined : handleContentKeyDown}
       role="button"
       tabIndex={content === "" && !isEditingValue ? "-1" : "0"}
     >

@@ -51,10 +51,9 @@ function Task({ task, state, actions }) {
       <div
         className="task"
         onKeyDown={
-          state.editingValuePath.length === 0 &&
-          state.editingContentPath.length === 0
-            ? handleKeyDown
-            : undefined
+          state.isEditingValue || state.isEditingContent
+            ? undefined
+            : handleKeyDown
         }
         ref={reference}
         role="button"

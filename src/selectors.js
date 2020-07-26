@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { equals } from "ramda";
 
-function getTasks({ editingValuePath, editingContentPath, tasks: allTasks }) {
+function getViewModel(state) {
+  const { editingValuePath, editingContentPath, tasks: allTasks } = state;
+
   function setPaths(tasks, parentPath) {
     return tasks.map((task, index) => {
       const path = [...parentPath, index];
@@ -16,7 +18,12 @@ function getTasks({ editingValuePath, editingContentPath, tasks: allTasks }) {
     });
   }
 
-  return setPaths(allTasks, []);
+  return {
+    ...state,
+    isEditingValue: editingValuePath.length !== 0,
+    isEditingContent: editingContentPath.length !== 0,
+    tasks: setPaths(allTasks, []),
+  };
 }
 
 function getTasksWithIds(tasks) {
@@ -27,4 +34,4 @@ function getTasksWithIds(tasks) {
   }));
 }
 
-export { getTasks, getTasksWithIds };
+export { getViewModel, getTasksWithIds };
