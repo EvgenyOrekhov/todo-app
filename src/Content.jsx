@@ -4,45 +4,40 @@ import AceEditor from "react-ace";
 import { equals } from "ramda";
 
 import { isSelectingText } from "./util.js";
+import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 function Content({ task, state, actions }) {
   const { content, path } = task;
 
-  function handleContentClick() {
-    if (!isSelectingText() && state.editingContentPath.length === 0) {
+  function handleRenderedContentClick() {
+    if (!isSelectingText()) {
       actions.editingContentPath.set(path);
     }
   }
 
   function handleContentFocus() {
-    if (content === "" && state.editingContentPath.length === 0) {
+    if (state.editingContentPath.length === 0 && content === "") {
       actions.editingContentPath.set(path);
     }
   }
 
-  function handleContentKeyDown(event) {
-    if (state.editingContentPath.length !== 0) {
-      return;
-    }
+  const handleContentKeyDown = makeKeyDownHandler({
+    Enter: (event) => {
+      if (state.editingContentPath.length === 0) {
+        event.preventDefault();
 
-    if (event.key === "Enter") {
-      event.preventDefault();
-
-      actions.editingContentPath.set(path);
-    }
-  }
+        actions.editingContentPath.set(path);
+      }
+    },
+  });
 
   return (
     <div
-      onClick={handleContentClick}
       onFocus={handleContentFocus}
       onKeyDown={handleContentKeyDown}
       role="button"
       tabIndex={
-        equals(path, state.editingContentPath) ||
-        (!content && !equals(path, state.editingValuePath))
-          ? "-1"
-          : "0"
+        content === "" && !equals(path, state.editingValuePath) ? "-1" : "0"
       }
     >
       {equals(path, state.editingContentPath) ? (
@@ -76,7 +71,8 @@ function Content({ task, state, actions }) {
           width="100%"
         />
       ) : (
-        <div className="content">
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- this is handled by the parent
+        <div className="content" onClick={handleRenderedContentClick}>
           <ReactMarkdown escapeHtml={false} source={content} />
         </div>
       )}
