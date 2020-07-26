@@ -1,9 +1,11 @@
-import React from "react";
+import React, { memo } from "react";
 import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 
 import { isSelectingText } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
+
+const ReactMarkdownMemoized = memo(ReactMarkdown);
 
 function Content({ task, state, actions }) {
   const { content, path, isEditingValue, isEditingContent } = task;
@@ -69,7 +71,7 @@ function Content({ task, state, actions }) {
       ) : (
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- this is handled by the parent
         <div className="content" onClick={handleRenderedContentClick}>
-          <ReactMarkdown escapeHtml={false} source={content} />
+          <ReactMarkdownMemoized escapeHtml={false} source={content} />
         </div>
       )}
     </div>
