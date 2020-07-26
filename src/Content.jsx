@@ -29,6 +29,9 @@ function Content({ task, state, actions }) {
         actions.editingContentPath.set(path);
       }
     },
+
+    "Ctrl + Enter": () => actions.addNextTask(path),
+    "Shift + Enter": () => actions.addSubtask(path),
   });
 
   return (
