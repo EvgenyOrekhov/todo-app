@@ -68,6 +68,7 @@ function Task({ task, state, actions }) {
         />
         <Value actions={actions} task={task} />
       </div>
+      <Content actions={actions} state={state} task={task} />
       <ul className="tasks">
         {children.map((subtask) => (
           <Task
@@ -78,7 +79,6 @@ function Task({ task, state, actions }) {
           />
         ))}
       </ul>
-      <Content actions={actions} state={state} task={task} />
     </li>
   );
 }
