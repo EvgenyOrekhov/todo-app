@@ -25,7 +25,6 @@ function Content({ task, state, actions }) {
     Enter: (event) => {
       if (state.editingContentPath.length === 0) {
         event.preventDefault();
-
         actions.editingContentPath.set(path);
       }
     },
