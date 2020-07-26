@@ -30,5 +30,4 @@ function handleDelete(children, callback) {
   callback();
 }
 
-// eslint-disable-next-line import/no-unused-modules
 export { isSelectingText, confirmRemoval, handleDelete };
