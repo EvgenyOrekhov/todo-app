@@ -33,14 +33,14 @@ function move(indexShift) {
     }
 
     const taskPath = getFullPath(path);
-    const previousTaskPath = getFullPath([...init(path), newIndex]);
+    const anotherTaskPath = getFullPath([...init(path), newIndex]);
 
     const task = getAtPath(taskPath, tasks);
-    const previousTask = getAtPath(previousTaskPath, tasks);
+    const anotherTask = getAtPath(anotherTaskPath, tasks);
 
     return [
-      setAtPath(previousTaskPath, () => task),
-      setAtPath(taskPath, () => previousTask),
+      setAtPath(anotherTaskPath, () => task),
+      setAtPath(taskPath, () => anotherTask),
     ];
   };
 }
