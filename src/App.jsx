@@ -9,7 +9,7 @@ import "ace-builds/src-noconflict/theme-tomorrow_night_bright.js";
 import "./App.css";
 /* eslint-enable */
 
-function App({ state, actions }) {
+export default function App({ state, actions }) {
   const viewModel = getViewModel(state);
 
   return (
@@ -26,5 +26,3 @@ function App({ state, actions }) {
     </>
   );
 }
-
-export default App;

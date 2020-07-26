@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { isSelectingText, confirmRemoval, handleDelete } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
-function Value({ task, actions }) {
+export default function Value({ task, actions }) {
   const { value, children, path, isEditingValue } = task;
 
   function handleEnterKey(event) {
@@ -97,5 +97,3 @@ function Value({ task, actions }) {
     </div>
   );
 }
-
-export default Value;

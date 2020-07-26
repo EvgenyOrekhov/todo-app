@@ -19,7 +19,7 @@ function useScrollIntoView() {
   return [reference, () => setShouldScrollIntoView(true)];
 }
 
-function Task({ task, state, actions }) {
+export default function Task({ task, state, actions }) {
   const { isDone, children, path, id } = task;
 
   const [reference, setShouldScrollIntoView] = useScrollIntoView();
@@ -81,5 +81,3 @@ function Task({ task, state, actions }) {
     </li>
   );
 }
-
-export default Task;

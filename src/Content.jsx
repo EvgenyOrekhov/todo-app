@@ -7,7 +7,7 @@ import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 const ReactMarkdownMemoized = memo(ReactMarkdown);
 
-function Content({ task, state, actions }) {
+export default function Content({ task, state, actions }) {
   const { content, path, isEditingValue, isEditingContent } = task;
 
   function handleRenderedContentClick() {
@@ -78,5 +78,3 @@ function Content({ task, state, actions }) {
     </div>
   );
 }
-
-export default Content;
