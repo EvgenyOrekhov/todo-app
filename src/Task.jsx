@@ -66,7 +66,7 @@ function Task({ task, state, actions }) {
           tabIndex="-1"
           type="checkbox"
         />
-        <Value actions={actions} state={state} task={task} />
+        <Value actions={actions} task={task} />
       </div>
       <ul className="tasks">
         {children.map((subtask) => (

@@ -1,19 +1,22 @@
 import { v4 as uuidv4 } from "uuid";
+import { equals } from "ramda";
 
-function setPaths(tasks, parentPath) {
-  return tasks.map((task, index) => {
-    const path = [...parentPath, index];
+function getTasks({ editingValuePath, editingContentPath, tasks: allTasks }) {
+  function setPaths(tasks, parentPath) {
+    return tasks.map((task, index) => {
+      const path = [...parentPath, index];
 
-    return {
-      ...task,
-      path,
-      children: setPaths(task.children, path),
-    };
-  });
-}
+      return {
+        ...task,
+        path,
+        isEditingValue: equals(path, editingValuePath),
+        isEditingContent: equals(path, editingContentPath),
+        children: setPaths(task.children, path),
+      };
+    });
+  }
 
-function getTasksWithPaths(tasks) {
-  return setPaths(tasks, []);
+  return setPaths(allTasks, []);
 }
 
 function getTasksWithIds(tasks) {
@@ -24,4 +27,4 @@ function getTasksWithIds(tasks) {
   }));
 }
 
-export { getTasksWithPaths, getTasksWithIds };
+export { getTasks, getTasksWithIds };

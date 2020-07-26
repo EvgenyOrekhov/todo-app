@@ -1,41 +1,46 @@
-import { getTasksWithPaths } from "./selectors.js";
+import { getTasks } from "./selectors.js";
 
-test("getTasksWithPaths()", () => {
+test("getTasks()", () => {
   expect.hasAssertions();
 
   expect(
-    getTasksWithPaths([
-      {
-        value: "default",
-        isDone: false,
+    getTasks({
+      editingValuePath: [],
+      editingContentPath: [],
 
-        children: [
-          {
-            value: "Create a ToDo app",
-            isDone: false,
-            children: [],
-          },
-        ],
-      },
-      {
-        value: "Movies",
-        isDone: false,
+      tasks: [
+        {
+          value: "default",
+          isDone: false,
 
-        children: [
-          {
-            value: "Rambo",
-            isDone: false,
-            children: [],
-          },
-          {
-            value: "Frozen",
-            isDone: true,
-            children: [],
-          },
-        ],
-      },
-    ])
-  ).toStrictEqual([
+          children: [
+            {
+              value: "Create a ToDo app",
+              isDone: false,
+              children: [],
+            },
+          ],
+        },
+        {
+          value: "Movies",
+          isDone: false,
+
+          children: [
+            {
+              value: "Rambo",
+              isDone: false,
+              children: [],
+            },
+            {
+              value: "Frozen",
+              isDone: true,
+              children: [],
+            },
+          ],
+        },
+      ],
+    })
+  ).toMatchObject([
     {
       path: [0],
       value: "default",
@@ -67,6 +72,64 @@ test("getTasksWithPaths()", () => {
           value: "Frozen",
           isDone: true,
           children: [],
+        },
+      ],
+    },
+  ]);
+});
+
+test("getTasks() - isEditing", () => {
+  expect.hasAssertions();
+
+  expect(
+    getTasks({
+      editingValuePath: [0, 0],
+      editingContentPath: [1, 0],
+
+      tasks: [
+        {
+          children: [
+            {
+              children: [],
+            },
+          ],
+        },
+        {
+          children: [
+            {
+              children: [],
+            },
+            {
+              children: [],
+            },
+          ],
+        },
+      ],
+    })
+  ).toMatchObject([
+    {
+      isEditingValue: false,
+      isEditingContent: false,
+
+      children: [
+        {
+          isEditingValue: true,
+          isEditingContent: false,
+        },
+      ],
+    },
+    {
+      isEditingValue: false,
+      isEditingContent: false,
+
+      children: [
+        {
+          isEditingValue: false,
+          isEditingContent: true,
+        },
+        {
+          isEditingValue: false,
+          isEditingContent: false,
         },
       ],
     },

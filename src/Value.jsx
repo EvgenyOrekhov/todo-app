@@ -1,12 +1,11 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import { equals } from "ramda";
 
 import { isSelectingText, confirmRemoval, handleDelete } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
-function Value({ task, state, actions }) {
-  const { value, children, path } = task;
+function Value({ task, actions }) {
+  const { value, children, path, isEditingValue } = task;
 
   function handleEnterKey(event) {
     if (event.target.value.trim() !== "") {
@@ -64,7 +63,7 @@ function Value({ task, state, actions }) {
 
   return (
     <div className="value">
-      {equals(path, state.editingValuePath) ? (
+      {isEditingValue ? (
         <input
           autoFocus
           defaultValue={value}

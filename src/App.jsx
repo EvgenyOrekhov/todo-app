@@ -1,7 +1,7 @@
 import React from "react";
 
 import Task from "./Task.jsx";
-import { getTasksWithPaths } from "./selectors.js";
+import { getTasks } from "./selectors.js";
 
 /* eslint-disable import/no-unassigned-import */
 import "ace-builds/src-noconflict/mode-markdown.js";
@@ -10,7 +10,7 @@ import "./App.css";
 /* eslint-enable */
 
 function App({ state, actions }) {
-  const tasksWithPaths = getTasksWithPaths(state.tasks);
+  const tasks = getTasks(state);
 
   return (
     <>
@@ -19,7 +19,7 @@ function App({ state, actions }) {
         ✚
       </button>
       <ul className="tasks">
-        {tasksWithPaths[0].children.map((task) => (
+        {tasks[0].children.map((task) => (
           <Task actions={actions} key={task.id} state={state} task={task} />
         ))}
       </ul>

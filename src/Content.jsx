@@ -1,13 +1,12 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
-import { equals } from "ramda";
 
 import { isSelectingText } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 function Content({ task, state, actions }) {
-  const { content, path } = task;
+  const { content, path, isEditingValue, isEditingContent } = task;
 
   function handleRenderedContentClick() {
     if (!isSelectingText()) {
@@ -35,11 +34,9 @@ function Content({ task, state, actions }) {
       onFocus={handleContentFocus}
       onKeyDown={handleContentKeyDown}
       role="button"
-      tabIndex={
-        content === "" && !equals(path, state.editingValuePath) ? "-1" : "0"
-      }
+      tabIndex={content === "" && !isEditingValue ? "-1" : "0"}
     >
-      {equals(path, state.editingContentPath) ? (
+      {isEditingContent ? (
         <AceEditor
           className="editable-content"
           commands={[
