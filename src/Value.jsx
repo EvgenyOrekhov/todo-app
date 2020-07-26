@@ -3,27 +3,14 @@ import ReactMarkdown from "react-markdown";
 import { equals } from "ramda";
 
 import { isSelectingText, confirmRemoval, handleDelete } from "./util.js";
+import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 function Value({ task, state, actions }) {
   const { value, children, path } = task;
 
-  function handleSave(event) {
-    actions.setValue(event.target.value);
-
-    if (event.ctrlKey) {
-      actions.addNextTask(path);
-
-      return;
-    }
-
-    if (event.shiftKey) {
-      actions.addSubtask(path);
-    }
-  }
-
   function handleEnterKey(event) {
     if (event.target.value.trim() !== "") {
-      handleSave(event);
+      actions.setValue(event.target.value);
 
       return;
     }
@@ -41,14 +28,26 @@ function Value({ task, state, actions }) {
     actions.deleteCurrentlyEditedTask();
   }
 
-  function handleKeyDown(event) {
-    if (event.key === "Enter") {
+  const handleKeyDown = makeKeyDownHandler({
+    Enter: handleEnterKey,
+
+    "Ctrl + Enter": (event) => {
       handleEnterKey(event);
 
-      return;
-    }
+      if (event.target.value.trim() !== "") {
+        actions.addNextTask(path);
+      }
+    },
 
-    if (event.key === "Escape") {
+    "Shift + Enter": (event) => {
+      handleEnterKey(event);
+
+      if (event.target.value.trim() !== "") {
+        actions.addSubtask(path);
+      }
+    },
+
+    Escape: () => {
       if (value === "") {
         actions.deleteCurrentlyEditedTask();
 
@@ -56,8 +55,8 @@ function Value({ task, state, actions }) {
       }
 
       actions.editingValuePath.reset();
-    }
-  }
+    },
+  });
 
   function handleDeleteClick() {
     handleDelete(children, () => actions.tasks.delete(path));

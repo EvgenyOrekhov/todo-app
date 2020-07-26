@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import Value from "./Value.jsx";
 import Content from "./Content.jsx";
 import { handleDelete } from "./util.js";
+import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 function useScrollIntoView() {
   const reference = useRef();
@@ -23,85 +24,38 @@ function Task({ task, state, actions }) {
 
   const [reference, setShouldScrollIntoView] = useScrollIntoView();
 
-  function handleSpaceKey(event) {
-    event.preventDefault();
+  const handleKeyDown = makeKeyDownHandler({
+    Space: (event) => {
+      event.preventDefault();
+      actions.tasks.toggle(path);
+    },
 
-    actions.tasks.toggle(path);
-  }
+    "Ctrl + Enter": () => actions.addNextTask(path),
+    "Shift + Enter": () => actions.addSubtask(path),
+    Enter: () => actions.editingValuePath.set(path),
+    Delete: () => handleDelete(children, () => actions.tasks.delete(path)),
 
-  function handleEnterKey(event) {
-    if (event.ctrlKey) {
-      actions.addNextTask(path);
+    "Shift + Up": () => {
+      actions.tasks.moveUp(path);
+      setShouldScrollIntoView();
+    },
 
-      return;
-    }
-
-    if (event.shiftKey) {
-      actions.addSubtask(path);
-
-      return;
-    }
-
-    actions.editingValuePath.set(path);
-  }
-
-  function handleDeleteKey() {
-    handleDelete(children, () => actions.tasks.delete(path));
-  }
-
-  function handleArrowKeys(event) {
-    if (event.shiftKey) {
-      if (event.key === "ArrowUp") {
-        actions.tasks.moveUp(path);
-
-        setShouldScrollIntoView();
-
-        return;
-      }
-
-      if (event.key === "ArrowDown") {
-        actions.tasks.moveDown(path);
-
-        setShouldScrollIntoView();
-      }
-    }
-  }
-
-  // eslint-disable-next-line max-statements
-  function handleKeyDown(event) {
-    if (
-      state.editingValuePath.length !== 0 ||
-      state.editingContentPath.length !== 0
-    ) {
-      return;
-    }
-
-    if (event.key === " ") {
-      handleSpaceKey(event);
-
-      return;
-    }
-
-    if (event.key === "Enter") {
-      handleEnterKey(event);
-
-      return;
-    }
-
-    if (event.key === "Delete") {
-      handleDeleteKey();
-
-      return;
-    }
-
-    handleArrowKeys(event);
-  }
+    "Shift + Down": () => {
+      actions.tasks.moveDown(path);
+      setShouldScrollIntoView();
+    },
+  });
 
   return (
     <li className={`${isDone ? "is-done" : ""}`} key={id}>
       <div
         className="task"
-        onKeyDown={handleKeyDown}
+        onKeyDown={
+          state.editingValuePath.length === 0 &&
+          state.editingContentPath.length === 0
+            ? handleKeyDown
+            : undefined
+        }
         ref={reference}
         role="button"
         tabIndex="0"
