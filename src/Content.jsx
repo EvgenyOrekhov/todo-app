@@ -24,10 +24,8 @@ function Content({ task, state, actions }) {
 
   const handleContentKeyDown = makeKeyDownHandler({
     Enter: (event) => {
-      if (state.editingContentPath.length === 0) {
-        event.preventDefault();
-        actions.editingContentPath.set(path);
-      }
+      event.preventDefault();
+      actions.editingContentPath.set(path);
     },
 
     "Ctrl + Enter": () => actions.addNextTask(path),
@@ -37,7 +35,9 @@ function Content({ task, state, actions }) {
   return (
     <div
       onFocus={handleContentFocus}
-      onKeyDown={handleContentKeyDown}
+      onKeyDown={
+        state.editingContentPath.length === 0 ? handleContentKeyDown : undefined
+      }
       role="button"
       tabIndex={content === "" && !isEditingValue ? "-1" : "0"}
     >
