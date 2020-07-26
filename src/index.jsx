@@ -52,6 +52,10 @@ init([
 
 <kbd>Delete</kbd> - Delete task
 
+<kbd>Shift + Down</kbd> - Move down
+
+<kbd>Shift + Up</kbd> - Move up
+
 ## Editing task
 
 <kbd>Enter</kbd> - Save
