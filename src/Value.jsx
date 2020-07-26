@@ -57,6 +57,12 @@ function Value({ task, actions }) {
     },
   });
 
+  function handleValueClick() {
+    if (!isSelectingText()) {
+      actions.editingValuePath.set(path);
+    }
+  }
+
   function handleDeleteClick() {
     handleDelete(children, () => actions.tasks.delete(path));
   }
@@ -74,9 +80,7 @@ function Value({ task, actions }) {
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- key events and focus are handled by the parent
         <div
           className="clickable-value"
-          onClick={() =>
-            !isSelectingText() && actions.editingValuePath.set(path)
-          }
+          onClick={handleValueClick}
           role="button"
         >
           <ReactMarkdown escapeHtml={false} source={value} />
