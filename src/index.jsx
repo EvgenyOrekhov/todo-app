@@ -16,7 +16,9 @@ init([
     editingContentPath: [],
     tasks: [],
   }),
+
   logger(),
+
   {
     state: {
       editingValuePath: [],
