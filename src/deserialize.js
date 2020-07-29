@@ -81,7 +81,6 @@ function deserializeChildren({ children, result, lastLevel, path }) {
   });
 }
 
-// eslint-disable-next-line import/no-unused-modules
 export default function deserialize(tasks) {
   return Object.entries(tasks).map(([taskList, children]) => ({
     value: taskList,

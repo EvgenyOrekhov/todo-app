@@ -55,6 +55,8 @@
 
     "no-alert": "off",
 
+    "import/no-unused-modules": "off",
+
     "optimize-regex/optimize-regex": "off",
     "security/detect-unsafe-regex": "off",
     "jest/require-top-level-describe": "off",
