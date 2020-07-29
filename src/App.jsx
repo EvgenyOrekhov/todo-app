@@ -1,7 +1,6 @@
 import React from "react";
 
 import Task from "./Task.jsx";
-import { getViewModel } from "./selectors.js";
 
 /* eslint-disable import/no-unassigned-import */
 import "ace-builds/src-noconflict/mode-markdown.js";
@@ -10,8 +9,6 @@ import "./App.css";
 /* eslint-enable */
 
 export default function App({ state, actions }) {
-  const viewModel = getViewModel(state);
-
   return (
     <>
       {/* eslint-disable-next-line react/jsx-handler-names */}
@@ -19,8 +16,8 @@ export default function App({ state, actions }) {
         ✚
       </button>
       <ul className="tasks">
-        {viewModel.tasks[0].children.map((task) => (
-          <Task actions={actions} key={task.id} state={viewModel} task={task} />
+        {state.tasks[0].children.map((task) => (
+          <Task actions={actions} key={task.id} state={state} task={task} />
         ))}
       </ul>
     </>

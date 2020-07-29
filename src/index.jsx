@@ -4,10 +4,11 @@ import { init } from "actus";
 import defaultActions from "actus-default-actions";
 import logger from "actus-logger";
 import merge from "mergerino";
+import { pipe, evolve } from "ramda";
 
 import App from "./App.jsx";
 import actions from "./actions.js";
-import { getTasksWithIds } from "./selectors.js";
+import { getTasksWithIds, getViewModel } from "./selectors.js";
 
 init([
   defaultActions({
@@ -82,14 +83,18 @@ init([
     getNextState: merge,
 
     subscribers: [
-      ({ state, actions: boundActions }) => {
-        render(
-          <React.StrictMode>
-            <App actions={boundActions} state={state} />
-          </React.StrictMode>,
-          document.querySelector("#root")
-        );
-      },
+      pipe(
+        evolve({ state: getViewModel }),
+
+        ({ state, actions: boundActions }) => {
+          render(
+            <React.StrictMode>
+              <App actions={boundActions} state={state} />
+            </React.StrictMode>,
+            document.querySelector("#root")
+          );
+        }
+      ),
     ],
   },
 ]);
