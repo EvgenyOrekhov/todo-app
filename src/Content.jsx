@@ -24,7 +24,9 @@ export default function Content({ task, state, actions }) {
 
   const handleContentKeyDown = makeKeyDownHandler({
     Enter: (event) => {
+      // Prevent printing a blank line at the beginning of the content:
       event.preventDefault();
+
       actions.editingContentPath.set(path);
     },
 
