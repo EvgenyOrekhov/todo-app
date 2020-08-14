@@ -8,6 +8,7 @@ import {
   path as getAtPath,
   assocPath,
   map,
+  move,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
@@ -23,25 +24,18 @@ function deleteAtPath(path) {
   return setAtPath(getFullPath(path), undefined);
 }
 
-function move(indexShift) {
+function moveTask(indexShift) {
   return (path, tasks) => {
-    const newIndex = last(path) + indexShift;
-    const siblings = getAtPath(getFullPathToSiblings(path), tasks);
+    const currentIndex = last(path);
+    const newIndex = currentIndex + indexShift;
+    const fullPathToSiblings = getFullPathToSiblings(path);
+    const siblings = getAtPath(fullPathToSiblings, tasks);
 
     if (newIndex < 0 || newIndex >= siblings.length) {
       return tasks;
     }
 
-    const taskPath = getFullPath(path);
-    const anotherTaskPath = getFullPath([...init(path), newIndex]);
-
-    const task = getAtPath(taskPath, tasks);
-    const anotherTask = getAtPath(anotherTaskPath, tasks);
-
-    return [
-      setAtPath(anotherTaskPath, () => task),
-      setAtPath(taskPath, () => anotherTask),
-    ];
+    return setAtPath(fullPathToSiblings, move(currentIndex, newIndex));
   };
 }
 
@@ -102,9 +96,9 @@ const actions = {
     delete: deleteAtPath,
 
     // eslint-disable-next-line no-magic-numbers
-    moveUp: move(-1),
+    moveUp: moveTask(-1),
 
-    moveDown: move(1),
+    moveDown: moveTask(1),
   },
 
   setValue,
