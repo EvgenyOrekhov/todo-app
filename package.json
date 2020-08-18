@@ -23,9 +23,7 @@
   },
   "dependencies": {
     "ace-builds": "^1.4.12",
-    "actus": "^0.3.0-alpha.2",
-    "actus-default-actions": "0.1.0-alpha.2",
-    "actus-logger": "^0.2.0-alpha.1",
+    "actus": "^0.5.0-alpha.0",
     "key-event-to-string": "^1.2.0",
     "mergerino": "^0.4.0",
     "ramda": "^0.27.1",
