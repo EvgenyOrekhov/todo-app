@@ -1,8 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { init } from "actus";
-import defaultActions from "actus-default-actions";
-import logger from "actus-logger";
+import { actus, defaultActions, logger } from "actus";
 import merge from "mergerino";
 import { pipe, evolve } from "ramda";
 
@@ -10,7 +8,7 @@ import App from "./App.jsx";
 import actions from "./actions.js";
 import { getTasksWithIds, getViewModel } from "./selectors.js";
 
-init([
+actus([
   defaultActions({
     editingValuePath: [],
     editingContentPath: [],

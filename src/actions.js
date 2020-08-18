@@ -25,7 +25,7 @@ function deleteAtPath(path) {
 }
 
 function moveTask(indexShift) {
-  return (path, tasks) => {
+  return ({ state: tasks, payload: path }) => {
     const currentIndex = last(path);
     const newIndex = currentIndex + indexShift;
     const fullPathToSiblings = getFullPathToSiblings(path);
@@ -53,7 +53,7 @@ function appendNewTask(tasks) {
   return append(makeTask(), tasks);
 }
 
-function addNextTask(parentPath, state) {
+function addNextTask({ state, payload: parentPath }) {
   return {
     tasks: setAtPath(getFullPathToSiblings(parentPath), appendNewTask),
 
@@ -76,8 +76,8 @@ const setContentAtPath = makeSetter("content");
 const setIsDoneAtPath = makeSetter("isDone");
 const setChildrenAtPath = makeSetter("children");
 
-function setValue(value, state) {
-  const trimmedValue = value.trim();
+function setValue({ state, payload }) {
+  const trimmedValue = payload.trim();
 
   return {
     tasks:
@@ -91,9 +91,9 @@ function setValue(value, state) {
 
 const actions = {
   tasks: {
-    toggle: (path) => setIsDoneAtPath(path, not),
+    toggle: ({ payload: path }) => setIsDoneAtPath(path, not),
 
-    delete: deleteAtPath,
+    delete: ({ payload: path }) => deleteAtPath(path),
 
     // eslint-disable-next-line no-magic-numbers
     moveUp: moveTask(-1),
@@ -103,18 +103,18 @@ const actions = {
 
   setValue,
 
-  setContent: (content, state) => ({
-    tasks: setContentAtPath(state.editingContentPath, content),
+  setContent: ({ state, payload }) => ({
+    tasks: setContentAtPath(state.editingContentPath, payload),
     editingContentPath: [],
   }),
 
-  addTask: (ignore, state) => addNextTask([0, 0], state),
+  addTask: ({ state }) => addNextTask({ state, payload: [0, 0] }),
 
-  deleteCurrentlyEditedTask: (ignore, state) => setValue("", state),
+  deleteCurrentlyEditedTask: ({ state }) => setValue({ state, payload: "" }),
 
   addNextTask,
 
-  addSubtask: (parentPath, state) => ({
+  addSubtask: ({ state, payload: parentPath }) => ({
     tasks: setChildrenAtPath(parentPath, appendNewTask),
 
     editingValuePath: [
