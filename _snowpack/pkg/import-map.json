@@ -1,0 +1,17 @@
+{
+  "imports": {
+    "ace-builds/src-noconflict/mode-markdown.js": "./ace-builds/src-noconflict/mode-markdown.js",
+    "ace-builds/src-noconflict/theme-tomorrow_night_bright.js": "./ace-builds/src-noconflict/theme-tomorrow_night_bright.js",
+    "actus": "./actus.js",
+    "key-event-to-string": "./key-event-to-string.js",
+    "mergerino": "./mergerino.js",
+    "ramda": "./ramda.js",
+    "react": "./react.js",
+    "react-ace": "./react-ace.js",
+    "react-dom": "./react-dom.js",
+    "react-markdown": "./react-markdown.js",
+    "rehype-raw": "./rehype-raw.js",
+    "rehype-sanitize": "./rehype-sanitize.js",
+    "uuid": "./uuid.js"
+  }
+}
