@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { actus, defaultActions, logger } from "actus";
+import { actus, defaultActions, logger, persist } from "actus";
 import merge from "mergerino";
 import { pipe, evolve } from "ramda";
 
@@ -97,6 +97,10 @@ actus([
       ),
     ],
   },
+
+  persist({
+    selector: ({ tasks }) => ({ tasks }),
+  }),
 ]);
 
 // Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
