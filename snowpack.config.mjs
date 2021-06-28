@@ -9,6 +9,15 @@ const config = {
       plugins: [nodePolyfills()],
     },
   },
+
+  optimize: {
+    bundle: true,
+    minify: true,
+    splitting: true,
+    treeshake: true,
+    sourcemap: true,
+    target: "es2020",
+  },
 };
 
 export default config;
