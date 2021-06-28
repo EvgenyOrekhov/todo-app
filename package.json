@@ -36,9 +36,9 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@snowpack/app-scripts-react": "^1.12.6",
+    "@snowpack/app-scripts-react": "^2.0.1",
     "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^10.4.9",
+    "@testing-library/react": "^12.0.0",
     "@twinscom/stylelint-config": "^5.4.0",
     "eslint": "^7.29.0",
     "eslint-config-hardcore": "^19.10.0",
@@ -54,7 +54,7 @@
     "prettier": "^2.3.2",
     "prettier-plugin-packagejson": "^2.2.11",
     "rollup-plugin-node-polyfills": "^0.2.1",
-    "snowpack": "^2.18.5",
+    "snowpack": "^3.6.2",
     "stylelint": "^13.13.1"
   }
 }
