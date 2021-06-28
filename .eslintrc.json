@@ -65,6 +65,7 @@
     "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
+    "react/jsx-newline": "off",
 
     "jsx-a11y/no-autofocus": "off"
   },
