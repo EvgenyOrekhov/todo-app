@@ -10,6 +10,10 @@ const config = {
     },
   },
 
+  buildOptions: {
+    baseUrl: "/todo-app",
+  },
+
   optimize: {
     bundle: true,
     minify: true,
