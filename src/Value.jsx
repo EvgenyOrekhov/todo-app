@@ -1,5 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 
 import { isSelectingText, confirmRemoval, handleDelete } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
@@ -83,7 +85,9 @@ export default function Value({ task, actions }) {
           onClick={handleValueClick}
           role="button"
         >
-          <ReactMarkdown escapeHtml={false} source={value} />
+          <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>
+            {value}
+          </ReactMarkdown>
         </div>
       )}
       <button
