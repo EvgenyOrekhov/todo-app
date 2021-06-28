@@ -36,7 +36,7 @@
           "**/*.spec.js",
           "jest.config.js",
           "jest.setup.js",
-          "snowpack.config.js"
+          "snowpack.config.mjs"
         ],
         "optionalDependencies": false,
         "peerDependencies": false,
@@ -74,7 +74,7 @@
     },
 
     {
-      "files": ["jest.config.js", "snowpack.config.js"],
+      "files": ["jest.config.js"],
 
       "parserOptions": {
         "sourceType": "script"
