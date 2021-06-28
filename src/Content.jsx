@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 import rehypeRaw from "rehype-raw";
@@ -8,6 +8,7 @@ import { isSelectingText } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 const ReactMarkdownMemoized = memo(ReactMarkdown);
+const rehypePlugins = [rehypeRaw, rehypeSanitize];
 
 function handleEditorFocus(event, editor) {
   editor.navigateFileStart();
@@ -45,6 +46,28 @@ export default function Content({ task, state, actions }) {
     [actions]
   );
 
+  const commands = useMemo(
+    () => [
+      {
+        name: "save",
+        bindKey: { win: "Ctrl-Enter", mac: "Command-Enter" },
+
+        exec(editor) {
+          actions.setContent(editor.getValue());
+        },
+      },
+      {
+        name: "cancel",
+        bindKey: { win: "Escape", mac: "Escape" },
+
+        exec() {
+          actions.editingContentPath.reset();
+        },
+      },
+    ],
+    [actions]
+  );
+
   return (
     <div
       onFocus={handleContentFocus}
@@ -55,24 +78,7 @@ export default function Content({ task, state, actions }) {
       {isEditingContent ? (
         <AceEditor
           className="editable-content"
-          commands={[
-            {
-              name: "save",
-              bindKey: { win: "Ctrl-Enter", mac: "Command-Enter" },
-
-              exec(editor) {
-                actions.setContent(editor.getValue());
-              },
-            },
-            {
-              name: "cancel",
-              bindKey: { win: "Escape", mac: "Escape" },
-
-              exec() {
-                actions.editingContentPath.reset();
-              },
-            },
-          ]}
+          commands={commands}
           defaultValue={content}
           focus
           height="100%"
@@ -85,7 +91,7 @@ export default function Content({ task, state, actions }) {
       ) : (
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- this is handled by the parent
         <div className="content" onClick={handleRenderedContentClick}>
-          <ReactMarkdownMemoized rehypePlugins={[rehypeRaw, rehypeSanitize]}>
+          <ReactMarkdownMemoized rehypePlugins={rehypePlugins}>
             {content}
           </ReactMarkdownMemoized>
         </div>
