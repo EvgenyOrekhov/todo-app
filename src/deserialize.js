@@ -82,8 +82,8 @@ function deserializeChildren({ children, result, lastLevel, path }) {
 }
 
 export default function deserialize(tasks) {
-  return Object.entries(tasks).map(([taskList, children]) => ({
-    value: taskList,
+  return Object.entries(tasks).map(([value, children]) => ({
+    value,
     isDone: false,
 
     children: deserializeChildren({

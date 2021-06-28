@@ -21,7 +21,7 @@ function confirmRemoval(children, onConfirm, onCancel) {
 }
 
 function handleDelete(children, callback) {
-  if (children.length !== 0) {
+  if (children.length > 0) {
     confirmRemoval(children, callback);
 
     return;

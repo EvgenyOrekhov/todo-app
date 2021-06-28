@@ -20,8 +20,8 @@ function getViewModel(state) {
 
   return {
     ...state,
-    isEditingValue: editingValuePath.length !== 0,
-    isEditingContent: editingContentPath.length !== 0,
+    isEditingValue: editingValuePath.length > 0,
+    isEditingContent: editingContentPath.length > 0,
     tasks: setPaths(allTasks, []),
   };
 }

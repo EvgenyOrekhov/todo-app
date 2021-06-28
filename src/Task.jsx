@@ -47,7 +47,7 @@ export default function Task({ task, state, actions }) {
   });
 
   return (
-    <li className={`${isDone ? "is-done" : ""}`} key={id}>
+    <li className={isDone ? "is-done" : ""} key={id}>
       <div
         className="task"
         onKeyDown={

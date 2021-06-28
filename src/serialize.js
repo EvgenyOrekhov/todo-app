@@ -15,7 +15,7 @@ function serializeChildren(children, level) {
   }
 
   return (
-    (children.length !== 0 && level !== 0 ? "\n" : "") +
+    (children.length > 0 && level !== 0 ? "\n" : "") +
     children.map(serializeChild).join("\n")
   );
 }

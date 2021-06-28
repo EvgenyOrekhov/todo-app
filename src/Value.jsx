@@ -16,7 +16,7 @@ export default function Value({ task, actions }) {
       return;
     }
 
-    if (children.length !== 0) {
+    if (children.length > 0) {
       confirmRemoval(
         children,
         actions.deleteCurrentlyEditedTask,
