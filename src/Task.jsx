@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 
 import Value from "./Value.jsx";
 import Content from "./Content.jsx";
@@ -46,6 +46,11 @@ export default function Task({ task, state, actions }) {
     },
   });
 
+  const handleChange = useCallback(
+    () => actions.tasks.toggle(path),
+    [actions, path]
+  );
+
   return (
     <li className={isDone ? "is-done" : ""} key={id}>
       <div
@@ -61,7 +66,7 @@ export default function Task({ task, state, actions }) {
       >
         <input
           checked={isDone}
-          onChange={() => actions.tasks.toggle(path)}
+          onChange={handleChange}
           tabIndex="-1"
           type="checkbox"
         />

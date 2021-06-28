@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 import rehypeRaw from "rehype-raw";
@@ -8,6 +8,10 @@ import { isSelectingText } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 const ReactMarkdownMemoized = memo(ReactMarkdown);
+
+function handleEditorFocus(event, editor) {
+  editor.navigateFileStart();
+}
 
 export default function Content({ task, state, actions }) {
   const { content, path, isEditingValue, isEditingContent } = task;
@@ -35,6 +39,11 @@ export default function Content({ task, state, actions }) {
     "Ctrl + Enter": () => actions.addNextTask(path),
     "Shift + Enter": () => actions.addSubtask(path),
   });
+
+  const handleEditorBlur = useCallback(
+    (event, editor) => actions.setContent(editor.getValue()),
+    [actions]
+  );
 
   return (
     <div
@@ -68,8 +77,8 @@ export default function Content({ task, state, actions }) {
           focus
           height="100%"
           mode="markdown"
-          onBlur={(event, editor) => actions.setContent(editor.getValue())}
-          onFocus={(event, editor) => editor.navigateFileStart()}
+          onBlur={handleEditorBlur}
+          onFocus={handleEditorFocus}
           theme="tomorrow_night_bright"
           width="100%"
         />

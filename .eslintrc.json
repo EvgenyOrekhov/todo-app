@@ -18,16 +18,6 @@
     "browser": true
   },
 
-  "globals": {
-    "blur": "off",
-    "defaultstatus": "off",
-    "defaultStatus": "off",
-    "event": "off",
-    "name": "off",
-    "status": "off",
-    "find": "off"
-  },
-
   "settings": {
     "react": {
       "version": "detect"
@@ -62,7 +52,6 @@
     "jest/require-top-level-describe": "off",
 
     "react/prop-types": "off",
-    "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
     "react/jsx-newline": "off",
