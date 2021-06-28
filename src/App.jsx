@@ -2,11 +2,9 @@ import React from "react";
 
 import Task from "./Task.jsx";
 
-/* eslint-disable import/no-unassigned-import */
 import "ace-builds/src-noconflict/mode-markdown.js";
 import "ace-builds/src-noconflict/theme-tomorrow_night_bright.js";
 import "./App.css";
-/* eslint-enable */
 
 export default function App({ state, actions }) {
   return (
