@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
+import prettier from "prettier";
 
 import { isSelectingText } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
@@ -12,6 +13,10 @@ const rehypePlugins = [rehypeRaw, rehypeSanitize];
 
 function handleEditorFocus(event, editor) {
   editor.navigateFileStart();
+}
+
+function format(source) {
+  return prettier.format(source, { parser: "markdown" });
 }
 
 export default function Content({ task, state, actions }) {
@@ -42,7 +47,7 @@ export default function Content({ task, state, actions }) {
   });
 
   const handleEditorBlur = useCallback(
-    (event, editor) => actions.setContent(editor.getValue()),
+    (event, editor) => actions.setContent(format(editor.getValue())),
     [actions]
   );
 
@@ -53,7 +58,7 @@ export default function Content({ task, state, actions }) {
         bindKey: { win: "Ctrl-Enter", mac: "Command-Enter" },
 
         exec(editor) {
-          actions.setContent(editor.getValue());
+          actions.setContent(format(editor.getValue()));
         },
       },
       {
