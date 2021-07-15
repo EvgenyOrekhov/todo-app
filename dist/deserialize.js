@@ -1,6 +1,6 @@
 import { init, dropLast, set, lensPath, last, over } from "../_snowpack/pkg/ramda.js";
 const indentSize = 2;
-const taskRegexp = /(?<indent> *)- \[(?<checkmark> |x)\] (?<value>.*)/u;
+const taskRegexp = /^(?<indent> *)- \[(?<checkmark> |x)\] (?<value>.*)/u;
 
 function deserializeChild(child) {
   const result = taskRegexp.exec(child);
