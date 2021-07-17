@@ -11,7 +11,6 @@ import {
   move,
   insert,
   evolve,
-  concat,
   slice,
   update,
   dec,
@@ -119,10 +118,10 @@ const actions = {
       const fullPathToSiblings = getFullPathToSiblings(path);
       const siblings = getAtPath(fullPathToSiblings, tasks);
       const followingSiblings = siblings.slice(last(path) + 1);
-      const taskWithNewChildren = evolve(
-        { children: concat(followingSiblings) },
-        task
-      );
+      const taskWithNewChildren = {
+        ...task,
+        children: task.children.concat(followingSiblings),
+      };
 
       return [
         deleteAtPath(path),
