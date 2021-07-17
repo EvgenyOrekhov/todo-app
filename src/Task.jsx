@@ -44,6 +44,10 @@ export default function Task({ task, state, actions }) {
       actions.tasks.moveDown(path);
       setShouldScrollIntoView();
     },
+
+    "Shift + Left": () => {
+      actions.tasks.moveLeft(path);
+    },
   });
 
   const handleChange = useCallback(

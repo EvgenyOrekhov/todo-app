@@ -9,6 +9,10 @@ import {
   assocPath,
   map,
   move,
+  insert,
+  evolve,
+  concat,
+  slice,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
@@ -99,6 +103,33 @@ const actions = {
     moveUp: moveTask(-1),
 
     moveDown: moveTask(1),
+
+    moveLeft({ state: tasks, payload: path }) {
+      // eslint-disable-next-line no-magic-numbers
+      if (path.length < 3) {
+        return tasks;
+      }
+
+      const fullPathToParentSiblings = pipe(init, getFullPathToSiblings)(path);
+      const task = getAtPath(getFullPath(path), tasks);
+      const newIndex = last(init(path)) + 1;
+      const fullPathToSiblings = getFullPathToSiblings(path);
+      const siblings = getAtPath(fullPathToSiblings, tasks);
+      const followingSiblings = siblings.slice(last(path) + 1);
+      const taskWithNewChildren = evolve(
+        { children: concat(followingSiblings) },
+        task
+      );
+
+      return [
+        deleteAtPath(path),
+        setAtPath(fullPathToSiblings, slice(0, last(path))),
+        setAtPath(
+          fullPathToParentSiblings,
+          insert(newIndex, taskWithNewChildren)
+        ),
+      ];
+    },
   },
 
   setValue,
