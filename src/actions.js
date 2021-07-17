@@ -13,6 +13,9 @@ import {
   evolve,
   concat,
   slice,
+  update,
+  dec,
+  adjust,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
@@ -127,6 +130,36 @@ const actions = {
         setAtPath(
           fullPathToParentSiblings,
           insert(newIndex, taskWithNewChildren)
+        ),
+      ];
+    },
+
+    moveRight({ state: tasks, payload: path }) {
+      if (last(path) === 0) {
+        return tasks;
+      }
+
+      const pathToPreviousSibling = adjust(path.length - 1, dec, path);
+      const task = getAtPath(getFullPath(path), tasks);
+      const taskWithoutChildren = { ...task, children: [] };
+      const fullPathToSiblings = getFullPathToSiblings(path);
+      const siblings = getAtPath(fullPathToSiblings, tasks);
+      const previousSibling = siblings[last(path) - 1];
+      const previousSiblingWithNewChildren = evolve(
+        { children: append(taskWithoutChildren) },
+        previousSibling
+      );
+
+      return [
+        deleteAtPath(path),
+        setAtPath(
+          fullPathToSiblings,
+          update(last(path) - 1, previousSiblingWithNewChildren)
+        ),
+        setAtPath(
+          [...getFullPath(pathToPreviousSibling), "children"],
+          (previousSiblingChildren) =>
+            previousSiblingChildren.concat(task.children)
         ),
       ];
     },

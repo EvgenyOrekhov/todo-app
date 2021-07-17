@@ -48,6 +48,10 @@ export default function Task({ task, state, actions }) {
     "Shift + Left": () => {
       actions.tasks.moveLeft(path);
     },
+
+    "Shift + Right": () => {
+      actions.tasks.moveRight(path);
+    },
   });
 
   const handleChange = useCallback(
