@@ -9,6 +9,12 @@ import {
   assocPath,
   map,
   move,
+  insert,
+  evolve,
+  slice,
+  update,
+  dec,
+  adjust,
 } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 
@@ -99,6 +105,63 @@ const actions = {
     moveUp: moveTask(-1),
 
     moveDown: moveTask(1),
+
+    moveLeft({ state: tasks, payload: path }) {
+      // eslint-disable-next-line no-magic-numbers
+      if (path.length < 3) {
+        return tasks;
+      }
+
+      const fullPathToParentSiblings = pipe(init, getFullPathToSiblings)(path);
+      const task = getAtPath(getFullPath(path), tasks);
+      const newIndex = last(init(path)) + 1;
+      const fullPathToSiblings = getFullPathToSiblings(path);
+      const siblings = getAtPath(fullPathToSiblings, tasks);
+      const followingSiblings = siblings.slice(last(path) + 1);
+      const taskWithNewChildren = {
+        ...task,
+        children: task.children.concat(followingSiblings),
+      };
+
+      return [
+        deleteAtPath(path),
+        setAtPath(fullPathToSiblings, slice(0, last(path))),
+        setAtPath(
+          fullPathToParentSiblings,
+          insert(newIndex, taskWithNewChildren)
+        ),
+      ];
+    },
+
+    moveRight({ state: tasks, payload: path }) {
+      if (last(path) === 0) {
+        return tasks;
+      }
+
+      const pathToPreviousSibling = adjust(path.length - 1, dec, path);
+      const task = getAtPath(getFullPath(path), tasks);
+      const taskWithoutChildren = { ...task, children: [] };
+      const fullPathToSiblings = getFullPathToSiblings(path);
+      const siblings = getAtPath(fullPathToSiblings, tasks);
+      const previousSibling = siblings[last(path) - 1];
+      const previousSiblingWithNewChildren = evolve(
+        { children: append(taskWithoutChildren) },
+        previousSibling
+      );
+
+      return [
+        deleteAtPath(path),
+        setAtPath(
+          fullPathToSiblings,
+          update(last(path) - 1, previousSiblingWithNewChildren)
+        ),
+        setAtPath(
+          [...getFullPath(pathToPreviousSibling), "children"],
+          (previousSiblingChildren) =>
+            previousSiblingChildren.concat(task.children)
+        ),
+      ];
+    },
   },
 
   setValue,

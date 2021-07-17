@@ -57,6 +57,10 @@ actus([
 
 <kbd>Shift + Up</kbd> - Move up
 
+<kbd>Shift + Left</kbd> - Move left
+
+<kbd>Shift + Right</kbd> - Move right
+
 ## Editing task
 
 <kbd>Enter</kbd> - Save
