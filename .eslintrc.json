@@ -1,49 +1,7 @@
 {
-  "extends": [
-    "hardcore",
-    "hardcore/fp",
-    "plugin:jest/all",
-    "plugin:jest-formatting/strict",
-    "plugin:react/all",
-    "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:react-perf/all",
-    "prettier"
-  ],
-
-  "parserOptions": {
-    "sourceType": "module"
-  },
-
-  "env": {
-    "browser": true
-  },
-
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
+  "extends": ["hardcore", "hardcore/fp", "hardcore/react"],
 
   "rules": {
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "test/**",
-          "tests/**",
-          "**/*.test.js",
-          "**/*.spec.js",
-          "jest.config.js",
-          "jest.setup.js",
-          "snowpack.config.mjs"
-        ],
-        "optionalDependencies": false,
-        "peerDependencies": false,
-        "bundledDependencies": false
-      }
-    ],
-
     "no-alert": "off",
 
     "import/no-unused-modules": "off",
@@ -90,6 +48,7 @@
       },
 
       "env": {
+        "browser": false,
         "node": true
       }
     }
