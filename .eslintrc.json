@@ -20,36 +20,10 @@
 
   "overrides": [
     {
-      "files": ["*.jsx"]
-    },
-
-    {
       "files": ["*.test.*"],
-
-      "env": {
-        "jest": true
-      },
 
       "rules": {
         "max-lines": ["error", 500]
-      }
-    },
-
-    {
-      "files": ["jest.config.js"],
-
-      "parserOptions": {
-        "sourceType": "script"
-      },
-
-      "rules": {
-        "unicorn/prefer-module": "off",
-        "import/no-commonjs": "off"
-      },
-
-      "env": {
-        "browser": false,
-        "node": true
       }
     }
   ]
