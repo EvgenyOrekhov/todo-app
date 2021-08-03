@@ -1,5 +1,11 @@
 {
-  "extends": ["hardcore", "hardcore/fp", "hardcore/react"],
+  "extends": [
+    "hardcore",
+    "hardcore/fp",
+    "hardcore/react",
+    "hardcore/react-testing-library",
+    "hardcore/jest"
+  ],
 
   "rules": {
     "no-alert": "off",
