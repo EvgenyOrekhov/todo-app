@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
@@ -71,18 +71,13 @@ export default function Value({ task, actions }) {
     handleDelete(children, () => actions.tasks.delete(path));
   }
 
-  const handleBlur = useCallback(
-    (event) => actions.setValue(event.target.value),
-    [actions]
-  );
-
   return (
     <div className="value">
       {isEditingValue ? (
         <input
           autoFocus
           defaultValue={value}
-          onBlur={handleBlur}
+          onBlur={handleEnterKey}
           onKeyDown={handleKeyDown}
         />
       ) : (
