@@ -3,11 +3,13 @@ import ReactMarkdown from "react-markdown";
 import AceEditor from "react-ace";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 
 import { isSelectingText } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
 const ReactMarkdownMemoized = memo(ReactMarkdown);
+const remarkPlugins = [remarkGfm];
 const rehypePlugins = [rehypeRaw, rehypeSanitize];
 
 function handleEditorFocus(event, editor) {
@@ -91,7 +93,10 @@ export default function Content({ task, state, actions }) {
       ) : (
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- this is handled by the parent
         <div className="content" onClick={handleRenderedContentClick}>
-          <ReactMarkdownMemoized rehypePlugins={rehypePlugins}>
+          <ReactMarkdownMemoized
+            rehypePlugins={rehypePlugins}
+            remarkPlugins={remarkPlugins}
+          >
             {content}
           </ReactMarkdownMemoized>
         </div>

@@ -2,10 +2,12 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 
 import { isSelectingText, confirmRemoval, handleDelete } from "./util.js";
 import makeKeyDownHandler from "./makeKeyDownHandler.js";
 
+const remarkPlugins = [remarkGfm];
 const rehypePlugins = [rehypeRaw, rehypeSanitize];
 
 export default function Value({ task, actions }) {
@@ -87,7 +89,12 @@ export default function Value({ task, actions }) {
           onClick={handleValueClick}
           role="button"
         >
-          <ReactMarkdown rehypePlugins={rehypePlugins}>{value}</ReactMarkdown>
+          <ReactMarkdown
+            rehypePlugins={rehypePlugins}
+            remarkPlugins={remarkPlugins}
+          >
+            {value}
+          </ReactMarkdown>
         </div>
       )}
       <button
